@@ -21,64 +21,64 @@ def api_key() -> str | None:
     return None
 
 
-_model: dict[str, str] = {}
+_candidates: dict[str, list[str]] = {}
+last_error = ""
 
 
-def pick_model(client: httpx.Client, tier: str) -> str:
-    """tier 'cheap' -> a Flash model, 'strong' -> a Pro model. Chosen from what the key can actually call,
-    so the code does not break when model names change. FINN_MODEL_CHEAP / FINN_MODEL_STRONG override."""
-    if tier in _model:
-        return _model[tier]
+def candidates(client: httpx.Client, tier: str) -> list[str]:
+    """Models to try, best first: 'cheap' -> Flash, 'strong' -> Pro then Flash. Read from what the key can call,
+    so names are not hard-wired. A model with no free quota (e.g. Omni Flash) answers 429 and the next one is tried;
+    the first that works is moved to the front. FINN_MODEL_CHEAP / FINN_MODEL_STRONG force one."""
+    if tier in _candidates:
+        return _candidates[tier]
     if (forced := os.getenv(f"FINN_MODEL_{tier.upper()}")):
-        _model[tier] = forced
-        return forced
+        _candidates[tier] = [forced]
+        return _candidates[tier]
     r = client.get(f"{BASE}/models", params={"pageSize": 200}, headers={"x-goog-api-key": api_key()}, timeout=20)
     r.raise_for_status()
+    skip = ("preview", "exp", "tts", "image", "live", "audio", "embedding", "omni", "computer", "robotics")
     names = sorted((m["name"].split("/")[-1] for m in r.json().get("models", [])
                     if "generateContent" in m.get("supportedGenerationMethods", [])
-                    and not any(x in m["name"] for x in ("preview", "exp", "tts", "image", "lite", "live", "audio", "embedding"))),
-                   reverse=True)
-    want = "flash" if tier == "cheap" else "pro"
-    chosen = next((n for n in names if n.startswith("gemini") and want in n), None) or next(n for n in names if "flash" in n)
-    _model[tier] = chosen
-    return chosen
+                    and m["name"].split("/")[-1].startswith("gemini") and not any(x in m["name"] for x in skip)), reverse=True)
+    flash = [n for n in names if "flash" in n and "lite" not in n] + [n for n in names if "flash-lite" in n]
+    pro = [n for n in names if "pro" in n]
+    _candidates[tier] = (pro + flash if tier == "strong" else flash)[:6]
+    return _candidates[tier]
 
 
 def ask_json(client: httpx.Client, prompt: str, *, doc_hash: str, prompt_version: str, tier: str = "cheap") -> dict | list | None:
-    """Returns parsed JSON, or None after one retry (bad output is dropped, never shown)."""
+    """Returns parsed JSON, or None (bad output is dropped, never shown). Cached by document + prompt version."""
+    global last_error
     if not api_key():
+        last_error = "no GEMINI_API_KEY"
         return None
-    model = pick_model(client, tier)
-    key = hashlib.sha1(f"{doc_hash}|{prompt_version}|{model}".encode()).hexdigest()
-    path = CACHE / f"{key}.json"
+    path = CACHE / f"{hashlib.sha1(f'{doc_hash}|{prompt_version}|{tier}'.encode()).hexdigest()}.json"
     if path.exists():
         return json.loads(path.read_text())
     body = {"contents": [{"parts": [{"text": prompt}]}],
             "generationConfig": {"responseMimeType": "application/json", "temperature": 0}}
-    last = "no attempt made"
-    for attempt in range(2):
-        try:
-            r = client.post(f"{BASE}/models/{model}:generateContent", json=body, headers={"x-goog-api-key": api_key()}, timeout=180)
-            if r.status_code != 200:
-                last = f"HTTP {r.status_code} from {model}: {r.text[:300]}"
-                if r.status_code in (429, 500, 503):
-                    time.sleep(20)
-                    continue
-                break                                    # 400/401/403/404 will not get better on retry
-            data = r.json()
-            out = json.loads(data["candidates"][0]["content"]["parts"][0]["text"])
-            _log(model, tier, prompt_version, data.get("usageMetadata", {}))
-            path.parent.mkdir(parents=True, exist_ok=True)
-            path.write_text(json.dumps(out))
-            return out
-        except (httpx.HTTPError, KeyError, IndexError, ValueError) as e:
-            last = f"{type(e).__name__}: {str(e)[:300]}"
-    global last_error
-    last_error = last
+    models = candidates(client, tier)
+    for model in list(models):
+        for attempt in range(2):
+            try:
+                r = client.post(f"{BASE}/models/{model}:generateContent", json=body, headers={"x-goog-api-key": api_key()}, timeout=180)
+                if r.status_code != 200:
+                    last_error = f"HTTP {r.status_code} from {model}: {r.text[:240]}"
+                    if r.status_code in (500, 503) or (r.status_code == 429 and "limit: 0" not in r.text and attempt == 0):
+                        time.sleep(25)                   # a per-minute limit clears; a zero quota does not
+                        continue
+                    break                                # try the next model
+                data = r.json()
+                out = json.loads(data["candidates"][0]["content"]["parts"][0]["text"])
+                _log(model, tier, prompt_version, data.get("usageMetadata", {}))
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text(json.dumps(out))
+                models.remove(model); models.insert(0, model)
+                return out
+            except (httpx.HTTPError, KeyError, IndexError, ValueError) as e:
+                last_error = f"{model}: {type(e).__name__}: {str(e)[:240]}"
+                break
     return None
-
-
-last_error = ""
 
 
 def _log(model: str, tier: str, prompt_version: str, usage: dict) -> None:

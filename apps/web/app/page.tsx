@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { Direction, FilingCard, Problem, Skeleton, Status } from "@/components/bits";
+import Sources from "@/components/Sources";
 import type { Brief } from "@/lib/api";
 import { useLoad } from "@/lib/useLoad";
 
@@ -80,6 +81,7 @@ export default function BriefPage() {
               )}
             </section>
           )}
+          <Sources />
         </>
       )}
     </div>

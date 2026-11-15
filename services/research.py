@@ -57,7 +57,7 @@ def extract(client, symbol: str, name: str, t: dict) -> tuple[list[GuidanceItem]
                           doc_hash=hashlib.sha1(data).hexdigest(), prompt_version="guidance_v1")
     if raw is None:
         info["error"] = "model unavailable or returned invalid output"
-        say(f"llm error: {router.last_error}")
+        say(f"llm error: {router.last_error} | tried: {router._candidates.get('cheap')}")
         return [], info
     items = []
     info["extracted"] = len(raw)
@@ -96,6 +96,8 @@ def research(client, symbol: str) -> dict:
     items, docs = [], []
     for t in calls:
         got, info = extract(client, symbol, name, t)
+        if not info.get("error"):
+            say(f"model used: {router._candidates.get('cheap', ['?'])[0]}")
         say(f"{symbol}: {t['label']} pages={info['pages']} extracted={info['extracted']} kept={info['kept']} {info.get('error', '')}")
         items += got; docs.append(info)
     latest = max((d["period"] for d in docs if not d.get("error")), key=match.order, default=None)
