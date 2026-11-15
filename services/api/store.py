@@ -30,3 +30,16 @@ def prices() -> dict[str, list[Bar]]:
 
 def meta() -> dict:
     return _read("meta.json", {"generated_at": None, "sources": {}})
+
+
+RESEARCH = SNAP.parent / "research"
+
+
+@lru_cache
+def research(symbol: str) -> dict | None:
+    p = RESEARCH / f"{symbol}.json"
+    return json.loads(p.read_text()) if p.exists() else None
+
+
+def researched() -> list[str]:
+    return sorted(p.stem for p in RESEARCH.glob("*.json")) if RESEARCH.exists() else []

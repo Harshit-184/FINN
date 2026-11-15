@@ -21,8 +21,8 @@ PROMPT = (Path(__file__).parent / "llm" / "prompts" / "guidance_v1.txt").read_te
 
 
 def pdf_pages(data: bytes) -> list[str]:
-    import fitz                                   # PyMuPDF
-    with fitz.open(stream=data, filetype="pdf") as doc:
+    import pymupdf
+    with pymupdf.open(stream=data, filetype="pdf") as doc:
         return [p.get_text() for p in doc]
 
 
@@ -57,6 +57,7 @@ def extract(client, symbol: str, name: str, t: dict) -> tuple[list[GuidanceItem]
                           doc_hash=hashlib.sha1(data).hexdigest(), prompt_version="guidance_v1")
     if raw is None:
         info["error"] = "model unavailable or returned invalid output"
+        say(f"llm error: {router.last_error}")
         return [], info
     items = []
     info["extracted"] = len(raw)

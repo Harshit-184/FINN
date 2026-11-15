@@ -1,5 +1,5 @@
 import Link from "next/link";
-import type { Card, EventPrice, Source } from "@/lib/api";
+import type { Card, EventPrice, ResultsCard, Source } from "@/lib/api";
 import { pct, tone, when, words } from "@/lib/api";
 
 const DIR = { positive: ["▲", "text-up"], negative: ["▼", "text-down"], mixed: ["◆", "text-crit"], neutral: ["", ""] } as const;
@@ -38,6 +38,30 @@ export function Strip({ e }: { e: EventPrice }) {
   );
 }
 
+export function Results({ r }: { r: ResultsCard }) {
+  return (
+    <div className="mt-3 border-t border-line pt-2">
+      <table className="w-full text-right">
+        <thead><tr className="text-[11px] text-dim"><th className="text-left font-normal">{r.period.replace("_", " ")}, ₹ cr</th><th className="font-normal" /><th className="font-normal">QoQ</th><th className="font-normal">YoY</th></tr></thead>
+        <tbody>
+          {r.rows.filter((x) => x.value != null).map((x) => (
+            <tr key={x.metric}>
+              <th className="py-0.5 text-left text-xs font-normal">{x.label}</th>
+              <td className="num text-sm">{x.value!.toLocaleString("en-IN", { maximumFractionDigits: 0 })}</td>
+              <td className={`num text-xs ${tone(x.qoq)}`}>{pct(x.qoq)}</td>
+              <td className={`num text-xs ${tone(x.yoy)}`}>{pct(x.yoy)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <p className="mt-1 text-[11px] text-dim">
+        {r.ebitda_margin?.pct != null && <>EBITDA margin <span className="num text-text">{r.ebitda_margin.pct}%</span>{r.ebitda_margin.yoy_bps != null && <> (<span className="num">{r.ebitda_margin.yoy_bps > 0 ? "+" : ""}{r.ebitda_margin.yoy_bps}</span> bps YoY)</>}. </>}
+        {r.basis[0].toUpperCase() + r.basis.slice(1)}. Confidence: {r.confidence}. {r.source_note}
+      </p>
+    </div>
+  );
+}
+
 export function FilingCard({ c, full }: { c: Card; full?: boolean }) {
   const spine = c.tier === "critical" ? "border-l-crit" : c.tier === "notable" ? "border-l-dim" : "border-l-line";
   return (
@@ -58,6 +82,7 @@ export function FilingCard({ c, full }: { c: Card; full?: boolean }) {
               {c.pillar_evidence && <> (filing mentions “{c.pillar_evidence}”)</>}
             </p>
           )}
+          {c.results && <Results r={c.results} />}
           {c.event_price && <Strip e={c.event_price} />}
           <footer className="mt-3 flex flex-wrap items-center gap-2 text-xs">
             <span className="ev ev-reported">Reported</span>

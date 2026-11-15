@@ -7,6 +7,11 @@ from ..engine import brief as brief_engine
 from ..engine.alerts import avg_volume
 from ..engine.config import company, holdings, load
 from ..engine.eventprice import strip
+from ..engine.models import Fact
+from ..engine import periods
+from ..engine.results import results_card
+import re
+from datetime import datetime as _dt
 from . import store
 
 app = FastAPI(title="FINN", version="0.1.0")
@@ -27,12 +32,54 @@ def health():
             "llm": bool(os.getenv("GEMINI_API_KEY")), "store": "snapshot"}
 
 
+_ENDED = re.compile(r"(?:period|quarter|year)s? ended (?:on )?([A-Z][a-z]+ \d{1,2}, \d{4})")
+
+
+def results_for(card: dict) -> dict | None:
+    """Headline numbers for a results filing, from stored facts for the quarter the filing names. None if either is missing."""
+    r = store.research(card["symbol"])
+    m = _ENDED.search(f"{card['body']} {card['subject']}")
+    if card["category"] != "results" or not r or not r.get("facts") or not m:
+        return None
+    try:
+        period = periods.quarter_of(_dt.strptime(m[1], "%B %d, %Y").date())
+    except ValueError:
+        return None
+    facts = [Fact(**f) for f in r["facts"] if f["period_type"] == "quarterly"]
+    if not any(f.period == period for f in facts):
+        return None
+    out = results_card(card["symbol"], period, facts, basis=r["basis"])
+    out["source_note"] = "Figures from screener.in's quarterly table (a compiled copy of the filing), not yet cross-checked against XBRL."
+    out["source_url"] = r["source_page"]
+    return out
+
+
+def _enrich(b: dict) -> dict:
+    for c in b["critical"]:
+        c["results"] = results_for(c)
+        c["event_price"] = strip(store.prices().get(c["symbol"], []), _dt.fromisoformat(c["filed_at"]))
+    return b
+
+
+@app.get("/research/{symbol}")
+def research(symbol: str):
+    r = store.research(symbol.upper())
+    if not r:
+        raise HTTPException(404, f"No stored research for {symbol.upper()} yet. Research runs from the ingestion machine: python -m services.research {symbol.upper()}")
+    return r
+
+
+@app.get("/researched")
+def researched():
+    return store.researched()
+
+
 @app.get("/brief")
 def brief(window: str = "24h"):
     if window not in WINDOWS:
         raise HTTPException(400, f"window must be one of {list(WINDOWS)}")
     sessions = [b.d for series in store.prices().values() for b in series[-1:]]
-    return brief_engine.build(store.filings(), store.alerts(), _now(), WINDOWS[window], max(sessions, default=None))
+    return _enrich(brief_engine.build(store.filings(), store.alerts(), _now(), WINDOWS[window], max(sessions, default=None)))
 
 
 @app.get("/portfolio")
@@ -73,4 +120,5 @@ def company_page(symbol: str):
     fs = sorted((f for f in store.filings() if f.symbol == symbol and f.superseded_by is None), key=lambda f: f.filed_at, reverse=True)
     return {"symbol": symbol, "name": c["name"], "sector": c["sector"], "pillars": c.get("pillars", []),
             "prices": [b.model_dump(mode="json") for b in bars[-120:]],
-            "filings": [{**brief_engine.card(f, store.alerts()), "event_price": strip(bars, f.filed_at) if f.tier != "routine" else None} for f in fs]}
+            "has_research": store.research(symbol) is not None,
+            "filings": [(lambda c: {**c, "results": results_for(c)})({**brief_engine.card(f, store.alerts()), "event_price": strip(bars, f.filed_at) if f.tier != "routine" else None}) for f in fs]}

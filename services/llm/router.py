@@ -55,12 +55,16 @@ def ask_json(client: httpx.Client, prompt: str, *, doc_hash: str, prompt_version
         return json.loads(path.read_text())
     body = {"contents": [{"parts": [{"text": prompt}]}],
             "generationConfig": {"responseMimeType": "application/json", "temperature": 0}}
+    last = "no attempt made"
     for attempt in range(2):
         try:
-            r = client.post(f"{BASE}/models/{model}:generateContent", json=body, headers={"x-goog-api-key": api_key()}, timeout=120)
-            if r.status_code == 429:
-                time.sleep(20); continue
-            r.raise_for_status()
+            r = client.post(f"{BASE}/models/{model}:generateContent", json=body, headers={"x-goog-api-key": api_key()}, timeout=180)
+            if r.status_code != 200:
+                last = f"HTTP {r.status_code} from {model}: {r.text[:300]}"
+                if r.status_code in (429, 500, 503):
+                    time.sleep(20)
+                    continue
+                break                                    # 400/401/403/404 will not get better on retry
             data = r.json()
             out = json.loads(data["candidates"][0]["content"]["parts"][0]["text"])
             _log(model, tier, prompt_version, data.get("usageMetadata", {}))
@@ -68,9 +72,13 @@ def ask_json(client: httpx.Client, prompt: str, *, doc_hash: str, prompt_version
             path.write_text(json.dumps(out))
             return out
         except (httpx.HTTPError, KeyError, IndexError, ValueError) as e:
-            last = e
-    print(f"llm: dropped ({prompt_version}): {last if 'last' in dir() else 'rate limited'}", flush=True)
+            last = f"{type(e).__name__}: {str(e)[:300]}"
+    global last_error
+    last_error = last
     return None
+
+
+last_error = ""
 
 
 def _log(model: str, tier: str, prompt_version: str, usage: dict) -> None:

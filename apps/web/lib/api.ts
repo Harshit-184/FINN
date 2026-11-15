@@ -25,7 +25,12 @@ export type Card = {
   direction: "positive" | "negative" | "mixed" | "neutral"; pillar_name: string | null; pillar_evidence: string | null;
   revised: boolean; amends: string | null; also_on: string[]; exchange: string; pdf_url: string | null;
   rule_why: string; confidence: "high" | "medium" | "low";
-  event_price?: EventPrice | null;
+  event_price?: EventPrice | null; results?: ResultsCard | null;
+};
+export type ResultsCard = {
+  period: string; basis: string; confidence: string; source_note: string;
+  rows: { metric: string; label?: string; value: number | null; qoq?: number | null; yoy?: number | null }[];
+  ebitda_margin: { pct: number | null; yoy_bps: number | null } | null;
 };
 export type EventPrice = { before: { d: string; close: number }; t1: Leg | null; t5: Leg | null; volume_x: number | null; label: string };
 type Leg = { d: string; close: number; pct: number };
@@ -41,7 +46,7 @@ export type Holding = {
 };
 export type Company = {
   symbol: string; name: string; sector: string; pillars: { id: string; name: string }[];
-  prices: { d: string; close: number; volume: number }[]; filings: Card[];
+  prices: { d: string; close: number; volume: number }[]; filings: Card[]; has_research?: boolean;
 };
 
 export const pct = (v: number | null | undefined, digits = 1) =>

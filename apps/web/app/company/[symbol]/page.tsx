@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import { use } from "react";
 import { FilingCard, Problem, Skeleton } from "@/components/bits";
 import { type Company, pct, tone } from "@/lib/api";
@@ -43,6 +44,11 @@ export default function CompanyPage({ params }: { params: Promise<{ symbol: stri
         <p className="text-xs text-dim">{c.symbol} · {c.sector}</p>
       </header>
       <Chart c={c} />
+      {c.has_research && (
+        <Link href={`/research/${c.symbol}`} className="block bg-text px-3 py-2.5 text-center text-sm font-medium text-ink">
+          Did management deliver what it promised?
+        </Link>
+      )}
       {c.pillars.length > 0 && (
         <section>
           <h2 className="mb-1 text-sm text-dim">Your thesis pillars</h2>

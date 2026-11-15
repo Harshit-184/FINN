@@ -53,6 +53,6 @@ def confidence(source_type: str, checks: list[Check]) -> Confidence:
     failed = {c.name for c in checks if not c.ok}
     if failed & {"arithmetic", "cross_source"} or source_type == "pdf_llm" and failed:
         return "low"
-    if failed or source_type in ("derived", "pdf_llm"):
+    if failed or source_type in ("derived", "pdf_llm", "screener"):    # a compiled copy is not the filing itself
         return "medium"
     return "high"
