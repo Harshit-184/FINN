@@ -13,10 +13,9 @@
    "url": "https://www.bseindia.com/stockinfo/AnnPdfOpen.aspx?Pname=f2eec946-af3f-4579-8a6b-1483aa6f7312.pdf",
    "pages": 21,
    "pages_sent": 14,
-   "extracted": 0,
-   "kept": 0,
-   "dropped": [],
-   "error": "model unavailable or returned invalid output"
+   "extracted": 3,
+   "kept": 3,
+   "dropped": []
   },
   {
    "n": 2,
@@ -25,10 +24,9 @@
    "url": "https://www.bseindia.com/stockinfo/AnnPdfOpen.aspx?Pname=3e7a67bd-6f64-475b-96e4-37f8d51b86f3.pdf",
    "pages": 20,
    "pages_sent": 12,
-   "extracted": 0,
-   "kept": 0,
-   "dropped": [],
-   "error": "model unavailable or returned invalid output"
+   "extracted": 2,
+   "kept": 2,
+   "dropped": []
   },
   {
    "n": 3,
@@ -39,8 +37,7 @@
    "pages_sent": 9,
    "extracted": 0,
    "kept": 0,
-   "dropped": [],
-   "error": "model unavailable or returned invalid output"
+   "dropped": []
   },
   {
    "n": 4,
@@ -49,13 +46,165 @@
    "url": "https://www.bseindia.com/stockinfo/AnnPdfOpen.aspx?Pname=dc08c9a5-8cf1-4103-951a-2ab5bdce40cd.pdf",
    "pages": 20,
    "pages_sent": 11,
-   "extracted": 0,
-   "kept": 0,
-   "dropped": [],
-   "error": "model unavailable or returned invalid output"
+   "extracted": 1,
+   "kept": 1,
+   "dropped": []
   }
  ],
- "scorecard": [],
+ "scorecard": [
+  {
+   "item": {
+    "company": "TATAPOWER",
+    "metric": "capex",
+    "kind": "absolute",
+    "low": 25000.0,
+    "high": 25000.0,
+    "unit": "INR_CRORE",
+    "period": "FY26",
+    "stated_in": "Q3_FY26",
+    "speaker": "Praveer Sinha",
+    "quote": "We invested nearly Rs.7,349 crores in this year and as we have mentioned to you we plan to spend Rs.25,000 crores in this financial year.",
+    "document": "https://www.bseindia.com/stockinfo/AnnPdfOpen.aspx?Pname=dc08c9a5-8cf1-4103-951a-2ab5bdce40cd.pdf",
+    "page": 5,
+    "supersedes_explicitly": false,
+    "withdrawn": false,
+    "segment": "",
+    "caveat": ""
+   },
+   "status": "not_verifiable",
+   "actual": null,
+   "actual_basis": "",
+   "progress": "",
+   "replaced_by": null,
+   "note": "No verified actuals for this metric and period.",
+   "evidence": []
+  },
+  {
+   "item": {
+    "company": "TATAPOWER",
+    "metric": "revenue",
+    "kind": "growth",
+    "low": 50.0,
+    "high": 60.0,
+    "unit": "PCT",
+    "period": "FY27",
+    "stated_in": "Q4_FY26",
+    "speaker": "Praveer Sinha",
+    "quote": "So, I do expect that in FY '27, the rooftop market, the rooftop business will grow, if not by 100%, at least by 50%, 60%.",
+    "document": "https://www.bseindia.com/stockinfo/AnnPdfOpen.aspx?Pname=3e7a67bd-6f64-475b-96e4-37f8d51b86f3.pdf",
+    "page": 12,
+    "supersedes_explicitly": false,
+    "withdrawn": false,
+    "segment": "Rooftop business",
+    "caveat": "This target is for Rooftop business, not the whole company. Segment actuals are not in the structured data yet, so it is not judged against company totals."
+   },
+   "status": "revised",
+   "actual": null,
+   "actual_basis": "",
+   "progress": "",
+   "replaced_by": {
+    "company": "TATAPOWER",
+    "metric": "revenue",
+    "kind": "growth",
+    "low": 60.0,
+    "high": 70.0,
+    "unit": "PCT",
+    "period": "FY27",
+    "stated_in": "Q1_FY27",
+    "speaker": "Praveer Sinha",
+    "quote": "In fact, last year, we grew by 100%, and this year also, we have plans to grow by about 60% to 70%.",
+    "document": "https://www.bseindia.com/stockinfo/AnnPdfOpen.aspx?Pname=f2eec946-af3f-4579-8a6b-1483aa6f7312.pdf",
+    "page": 5,
+    "supersedes_explicitly": false,
+    "withdrawn": false,
+    "segment": "Rooftop business",
+    "caveat": "This target is for Rooftop business, not the whole company. Segment actuals are not in the structured data yet, so it is not judged against company totals."
+   },
+   "note": "",
+   "evidence": []
+  },
+  {
+   "item": {
+    "company": "TATAPOWER",
+    "metric": "revenue",
+    "kind": "growth",
+    "low": 60.0,
+    "high": 70.0,
+    "unit": "PCT",
+    "period": "FY27",
+    "stated_in": "Q1_FY27",
+    "speaker": "Praveer Sinha",
+    "quote": "In fact, last year, we grew by 100%, and this year also, we have plans to grow by about 60% to 70%.",
+    "document": "https://www.bseindia.com/stockinfo/AnnPdfOpen.aspx?Pname=f2eec946-af3f-4579-8a6b-1483aa6f7312.pdf",
+    "page": 5,
+    "supersedes_explicitly": false,
+    "withdrawn": false,
+    "segment": "Rooftop business",
+    "caveat": "This target is for Rooftop business, not the whole company. Segment actuals are not in the structured data yet, so it is not judged against company totals."
+   },
+   "status": "not_verifiable",
+   "actual": null,
+   "actual_basis": "",
+   "progress": "",
+   "replaced_by": null,
+   "note": "This target is for Rooftop business, not the whole company. Segment actuals are not in the structured data yet, so it is not judged against company totals.",
+   "evidence": []
+  },
+  {
+   "item": {
+    "company": "TATAPOWER",
+    "metric": "capex",
+    "kind": "absolute",
+    "low": 25000.0,
+    "high": 25000.0,
+    "unit": "INR_CRORE",
+    "period": "FY27",
+    "stated_in": "Q1_FY27",
+    "speaker": "Praveer Sinha",
+    "quote": "And we expect that the INR 25,000 crores that we have lined up for this year, we'll be able to implement.",
+    "document": "https://www.bseindia.com/stockinfo/AnnPdfOpen.aspx?Pname=f2eec946-af3f-4579-8a6b-1483aa6f7312.pdf",
+    "page": 7,
+    "supersedes_explicitly": false,
+    "withdrawn": false,
+    "segment": "",
+    "caveat": ""
+   },
+   "status": "not_verifiable",
+   "actual": null,
+   "actual_basis": "",
+   "progress": "",
+   "replaced_by": null,
+   "note": "No verified actuals for this metric and period.",
+   "evidence": []
+  },
+  {
+   "item": {
+    "company": "TATAPOWER",
+    "metric": "capex",
+    "kind": "absolute",
+    "low": 6000.0,
+    "high": 6500.0,
+    "unit": "INR_CRORE",
+    "period": "Q2_FY27",
+    "stated_in": "Q1_FY27",
+    "speaker": "Sanjeev Churiwala",
+    "quote": "But yes, you can assume in our quarter 2 also, we're kind of looking at a capex plan of probably higher than INR 6,000 crores. Maybe if everything goes well, it will be closer to INR 6,500 crores.",
+    "document": "https://www.bseindia.com/stockinfo/AnnPdfOpen.aspx?Pname=f2eec946-af3f-4579-8a6b-1483aa6f7312.pdf",
+    "page": 14,
+    "supersedes_explicitly": false,
+    "withdrawn": false,
+    "segment": "",
+    "caveat": ""
+   },
+   "status": "not_verifiable",
+   "actual": null,
+   "actual_basis": "",
+   "progress": "",
+   "replaced_by": null,
+   "note": "No verified actuals for this metric and period.",
+   "evidence": []
+  }
+ ],
  "facts": [
   {
    "company": "TATAPOWER",

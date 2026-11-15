@@ -67,7 +67,7 @@ def ask_json(client: httpx.Client, prompt: str, *, doc_hash: str, prompt_version
         return None
     print(f"  llm: candidates {models}", flush=True)
     for model in list(models):
-        tries = 5 if model == models[0] else 1          # be patient with the model that works; one shot at the others
+        tries = 4 if model == models[0] else 1          # be patient with the model that works; one shot at the others
         for attempt in range(tries):
             try:
                 print(f"  llm: asking {model} (try {attempt + 1}, {len(prompt) // 1000}k chars)...", flush=True)
@@ -75,12 +75,13 @@ def ask_json(client: httpx.Client, prompt: str, *, doc_hash: str, prompt_version
                 print(f"  llm: {model} -> HTTP {r.status_code}", flush=True)
                 if r.status_code != 200:
                     last_error = f"HTTP {r.status_code} from {model}: {r.text[:240]}"
-                    daily = "PerDay" in r.text or "limit: 0" in r.text
-                    if r.status_code in (429, 500, 503) and not daily and attempt + 1 < tries:
-                        print("  llm: per-minute limit or overload, waiting 45s...", flush=True)
-                        time.sleep(45)                   # free-tier tokens-per-minute limit clears within a minute
+                    if r.status_code in (429, 500, 503) and attempt + 1 < tries:
+                        # Seen live: the same model answers 200 a minute after a 429, so this is the free tier's
+                        # tokens-per-minute limit. Wait a full minute rather than moving to a weaker model.
+                        print("  llm: rate limited, waiting 65s...", flush=True)
+                        time.sleep(65)
                         continue
-                    break                                # daily quota gone or no quota: try the next model
+                    break
                 data = r.json()
                 out = json.loads(data["candidates"][0]["content"]["parts"][0]["text"])
                 _log(model, tier, prompt_version, data.get("usageMetadata", {}))
