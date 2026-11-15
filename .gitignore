@@ -9,3 +9,4 @@ node_modules/
 data/cache/
 *.pyc
 apps/web/public/snapshot/
+*.env
