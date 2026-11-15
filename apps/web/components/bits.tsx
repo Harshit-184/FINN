@@ -49,7 +49,7 @@ export function FilingCard({ c, full }: { c: Card; full?: boolean }) {
         {c.revised && <span className="rounded-sm border border-crit px-1 text-[11px] text-crit">Revised</span>}
         <time className="num ml-auto text-dim">{when(c.filed_at)}</time>
       </header>
-      <h3 className={`mt-1 ${full ? "text-[15px] leading-snug" : "text-sm leading-snug"}`}>{c.subject}</h3>
+      <h3 className={`mt-1 ${full ? "text-[15px] leading-snug" : "text-sm leading-snug"}`}>{c.headline || c.subject}</h3>
       {full && (
         <>
           {c.pillar_name && (

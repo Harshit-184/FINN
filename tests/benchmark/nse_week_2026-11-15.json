@@ -1,0 +1,375 @@
+{
+ "source": "NSE corporate announcements, 18 portfolio symbols, 8-15 Nov 2026, fetched 15 Nov 2026",
+ "labelling": "Expected category assigned by reading the exchange subject and summary text of each filing, not the attached PDF.",
+ "filings": [
+  {
+   "id": "NSE:106853097",
+   "symbol": "LT",
+   "exchange": "NSE",
+   "filed_at": "2026-11-09T10:37:33",
+   "subject": "Bagging/Receiving of orders/contracts",
+   "body": "Larsen & Toubro Limited has informed the Exchange about Bagging/Receiving of orders/contracts",
+   "expected": "press_release"
+  },
+  {
+   "id": "NSE:106853374",
+   "symbol": "TITAN",
+   "exchange": "NSE",
+   "filed_at": "2026-11-09T14:58:25",
+   "subject": "Analysts/Institutional Investor Meet/Con. Call Updates",
+   "body": "Titan Company Limited has informed the Exchange about Schedule of meet",
+   "expected": "investor_meetings"
+  },
+  {
+   "id": "NSE:106853387",
+   "symbol": "TITAN",
+   "exchange": "NSE",
+   "filed_at": "2026-11-09T15:06:51",
+   "subject": "General Updates",
+   "body": "Titan Company Limited has informed the Exchange about Redemption of Commercial Paper",
+   "expected": "unclassified"
+  },
+  {
+   "id": "NSE:106853499",
+   "symbol": "DMART",
+   "exchange": "NSE",
+   "filed_at": "2026-11-09T16:56:39",
+   "subject": "General Updates",
+   "body": "Avenue Supermarts Limited has informed the Exchange about Repayment of Commercial Paper",
+   "expected": "unclassified"
+  },
+  {
+   "id": "NSE:106853610",
+   "symbol": "CDSL",
+   "exchange": "NSE",
+   "filed_at": "2026-11-09T18:00:34",
+   "subject": "Analysts/Institutional Investor Meet/Con. Call Updates",
+   "body": "CDSL has informed the Exchange about Schedule of Analyst Call with Non-Deal Road Show organised by HDFC Securities Limited to be held on Friday, November 13, 2026",
+   "expected": "investor_meetings"
+  },
+  {
+   "id": "NSE:106853616",
+   "symbol": "CDSL",
+   "exchange": "NSE",
+   "filed_at": "2026-11-09T18:03:30",
+   "subject": "Analysts/Institutional Investor Meet/Con. Call Updates",
+   "body": "CDSL has informed the Exchange about Schedule of Analyst Call with JM Financial Annual India Conference - India Xchange 2026 to be held on Tuesday, November 17, 2026",
+   "expected": "investor_meetings"
+  },
+  {
+   "id": "NSE:106853618",
+   "symbol": "CDSL",
+   "exchange": "NSE",
+   "filed_at": "2026-11-09T18:05:26",
+   "subject": "Analysts/Institutional Investor Meet/Con. Call Updates",
+   "body": "CDSL has informed the Exchange about Schedule of Analyst Call with Avendus Spark INDX: Annual Investor Conference to be held on Wednesday, November 18, 2026",
+   "expected": "investor_meetings"
+  },
+  {
+   "id": "NSE:106853622",
+   "symbol": "CDSL",
+   "exchange": "NSE",
+   "filed_at": "2026-11-09T18:08:06",
+   "subject": "Analysts/Institutional Investor Meet/Con. Call Updates",
+   "body": "CDSL has informed the Exchange about Schedule of Analyst Call with J.P. Morgan India Emerging Opportunities Forum to be held on Thursday, November 19, 2026",
+   "expected": "investor_meetings"
+  },
+  {
+   "id": "NSE:106854012",
+   "symbol": "MARUTI",
+   "exchange": "NSE",
+   "filed_at": "2026-11-10T11:56:00",
+   "subject": "General Updates",
+   "body": "Maruti Suzuki India Limited has informed the Exchange about Reference to the Financial Results issued by Suzuki Motor Corporation",
+   "expected": "unclassified"
+  },
+  {
+   "id": "NSE:106854034",
+   "symbol": "BAJFINANCE",
+   "exchange": "NSE",
+   "filed_at": "2026-11-10T12:15:58",
+   "subject": "Committee Meeting Updates",
+   "body": "Bajaj Finance Limited has informed the Exchange regarding Outcome of PI 2026 - Special Committee Meeting held on November 10, 2026.",
+   "expected": "fund_raise"
+  },
+  {
+   "id": "NSE:106854062",
+   "symbol": "BAJFINANCE",
+   "exchange": "NSE",
+   "filed_at": "2026-11-10T12:58:49",
+   "subject": "Allotment of Securities",
+   "body": "Bajaj Finance Limited has informed the Exchange regarding allotment of 5,74,25,740 securities pursuant to Preferential Issue at its meeting held on November 10, 2026",
+   "expected": "fund_raise"
+  },
+  {
+   "id": "NSE:106854653",
+   "symbol": "TATAPOWER",
+   "exchange": "NSE",
+   "filed_at": "2026-11-11T09:57:50",
+   "subject": "Analysts/Institutional Investor Meet/Con. Call Updates",
+   "body": "Tata Power Company Limited has informed the Exchange about Schedule of meet",
+   "expected": "investor_meetings"
+  },
+  {
+   "id": "NSE:106855021",
+   "symbol": "TATAPOWER",
+   "exchange": "NSE",
+   "filed_at": "2026-11-11T13:45:36",
+   "subject": "ESOP/ESOS/ESPS",
+   "body": "Tata Power Company Limited has informed the Exchange regarding Grant of 6488790  Options.",
+   "expected": "unclassified"
+  },
+  {
+   "id": "NSE:106855083",
+   "symbol": "TITAN",
+   "exchange": "NSE",
+   "filed_at": "2026-11-11T14:39:56",
+   "subject": "Analysts/Institutional Investor Meet/Con. Call Updates",
+   "body": "Titan Company Limited has informed the Exchange about Earnings Call Transcripts",
+   "expected": "earnings_call"
+  },
+  {
+   "id": "NSE:106855359",
+   "symbol": "BAJFINANCE",
+   "exchange": "NSE",
+   "filed_at": "2026-11-11T17:13:26",
+   "subject": "General Updates",
+   "body": "Bajaj Finance Limited has informed the Exchange about outcome of QIP 2026 - Special Committee meeting",
+   "expected": "fund_raise"
+  },
+  {
+   "id": "NSE:106855371",
+   "symbol": "TATAPOWER",
+   "exchange": "NSE",
+   "filed_at": "2026-11-11T17:20:19",
+   "subject": "Outcome of Board Meeting",
+   "body": "Tata Power Company Limited has submitted to the Exchange, the financial results for the period ended September 30, 2026.",
+   "expected": "results"
+  },
+  {
+   "id": "NSE:106855404",
+   "symbol": "TATAPOWER",
+   "exchange": "NSE",
+   "filed_at": "2026-11-11T17:33:14",
+   "subject": "Investor Presentation",
+   "body": "Tata Power Company Limited has informed the Exchange about Investor Presentation",
+   "expected": "investor_meetings"
+  },
+  {
+   "id": "NSE:106855421",
+   "symbol": "TATAPOWER",
+   "exchange": "NSE",
+   "filed_at": "2026-11-11T17:39:57",
+   "subject": "Press Release",
+   "body": "Tata Power Company Limited has informed the Exchange regarding a press release dated November 11, 2026, titled \"Press Release issued by the Company on the Audited Standalone Financial Results and Unaudited Consolidated Financial Results of the Company for the quarter and half year ended September 30, 2026.\".",
+   "expected": "press_release"
+  },
+  {
+   "id": "NSE:106855429",
+   "symbol": "TATAPOWER",
+   "exchange": "NSE",
+   "filed_at": "2026-11-11T17:42:13",
+   "subject": "Capacity addition",
+   "body": "Tata Power Company Limited has informed the Exchange about Capacity addition",
+   "expected": "capex"
+  },
+  {
+   "id": "NSE:106855565",
+   "symbol": "BHARTIARTL",
+   "exchange": "NSE",
+   "filed_at": "2026-11-11T18:33:53",
+   "subject": "Analysts/Institutional Investor Meet/Con. Call Updates",
+   "body": "Bharti Airtel Limited has informed the Exchange about Schedule of meet",
+   "expected": "investor_meetings"
+  },
+  {
+   "id": "NSE:106855625",
+   "symbol": "TATAPOWER",
+   "exchange": "NSE",
+   "filed_at": "2026-11-11T19:01:38",
+   "subject": "Appointment",
+   "body": "Tata Power Company Limited has informed the Exchange regarding Appointment of Mr Sanjay Kumar Banga as additional Executive Director of the company w.e.f. November 11, 2026.",
+   "expected": "management_change"
+  },
+  {
+   "id": "NSE:106855670",
+   "symbol": "TATAPOWER",
+   "exchange": "NSE",
+   "filed_at": "2026-11-11T19:22:17",
+   "subject": "Updates",
+   "body": "Tata Power Company Limited has informed the Exchange regarding 'Reg 30 Change in Management'.",
+   "expected": "management_change"
+  },
+  {
+   "id": "NSE:106855738",
+   "symbol": "TATAPOWER",
+   "exchange": "NSE",
+   "filed_at": "2026-11-11T20:35:57",
+   "subject": "Analysts/Institutional Investor Meet/Con. Call Updates",
+   "body": "Tata Power Company Limited has informed the Exchange about Link of Recording",
+   "expected": "investor_meetings"
+  },
+  {
+   "id": "NSE:106856189",
+   "symbol": "INFY",
+   "exchange": "NSE",
+   "filed_at": "2026-11-12T11:19:58",
+   "subject": "Updates",
+   "body": "Infosys Limited has informed the Exchange regarding 'Six Promising Researchers Win the Infosys Prize 2026 Awarded by the Infosys Science Foundation'.",
+   "expected": "unclassified"
+  },
+  {
+   "id": "NSE:106856325",
+   "symbol": "MARUTI",
+   "exchange": "NSE",
+   "filed_at": "2026-11-12T11:57:20",
+   "subject": "Analysts/Institutional Investor Meet/Con. Call Updates",
+   "body": "Maruti Suzuki India Limited has informed the Exchange about Schedule of meet",
+   "expected": "investor_meetings"
+  },
+  {
+   "id": "NSE:106856600",
+   "symbol": "HDFCBANK",
+   "exchange": "NSE",
+   "filed_at": "2026-11-12T14:27:53",
+   "subject": "Analysts/Institutional Investor Meet/Con. Call Updates",
+   "body": "HDFC Bank Limited has informed the Exchange about Schedule of meet",
+   "expected": "investor_meetings"
+  },
+  {
+   "id": "NSE:106856607",
+   "symbol": "TATAPOWER",
+   "exchange": "NSE",
+   "filed_at": "2026-11-12T14:30:56",
+   "subject": "Copy of Newspaper Publication",
+   "body": "Tata Power Company Limited has informed the Exchange about Copy of Newspaper Publication pertaining Financial Results for Quarter and half year ended September 30, 2026",
+   "expected": "unclassified"
+  },
+  {
+   "id": "NSE:106856694",
+   "symbol": "TITAN",
+   "exchange": "NSE",
+   "filed_at": "2026-11-12T15:30:00",
+   "subject": "Analysts/Institutional Investor Meet/Con. Call Updates",
+   "body": "Titan Company Limited has informed the Exchange about Schedule of Analyst / Institutional Investor Meeting",
+   "expected": "investor_meetings"
+  },
+  {
+   "id": "NSE:106856809",
+   "symbol": "KPITTECH",
+   "exchange": "NSE",
+   "filed_at": "2026-11-12T16:20:13",
+   "subject": "Analysts/Institutional Investor Meet/Con. Call Updates",
+   "body": "KPIT Technologies Limited has informed the Exchange about Schedule of meet",
+   "expected": "investor_meetings"
+  },
+  {
+   "id": "NSE:106856808",
+   "symbol": "KPITTECH",
+   "exchange": "NSE",
+   "filed_at": "2026-11-12T16:20:13",
+   "subject": "Analysts/Institutional Investor Meet/Con. Call Updates",
+   "body": "KPIT Technologies Limited has informed the Exchange about Schedule of Investors/Analyst Conference to be held on Monday, November 16, 2026.",
+   "expected": "investor_meetings"
+  },
+  {
+   "id": "NSE:106857040",
+   "symbol": "IRCTC",
+   "exchange": "NSE",
+   "filed_at": "2026-11-12T17:32:14",
+   "subject": "Outcome of Board Meeting",
+   "body": "Indian Railway Catering And Tourism Corporation Limited has submitted to the Exchange, the financial results for the period ended September 30, 2026.",
+   "expected": "results"
+  },
+  {
+   "id": "NSE:106857049",
+   "symbol": "HDFCBANK",
+   "exchange": "NSE",
+   "filed_at": "2026-11-12T17:33:25",
+   "subject": "General Updates",
+   "body": "HDFC Bank Limited has informed the Exchange about Approval from the Reserve Bank of India for re-appointment of Mr. V. Srinivasa Rangan asthe Whole-time Director (designated as Executive Director) of HDFC Bank Limited",
+   "expected": "management_change"
+  },
+  {
+   "id": "NSE:106857062",
+   "symbol": "BHARTIARTL",
+   "exchange": "NSE",
+   "filed_at": "2026-11-12T17:36:21",
+   "subject": "Analysts/Institutional Investor Meet/Con. Call Updates",
+   "body": "Bharti Airtel Limited has informed the Exchange about Transcript",
+   "expected": "earnings_call"
+  },
+  {
+   "id": "NSE:106857341",
+   "symbol": "TITAN",
+   "exchange": "NSE",
+   "filed_at": "2026-11-12T18:45:52",
+   "subject": "General Updates",
+   "body": "Titan Company Limited has informed the Exchange about Redemption of Commercial Paper",
+   "expected": "unclassified"
+  },
+  {
+   "id": "NSE:106857662",
+   "symbol": "RELIANCE",
+   "exchange": "NSE",
+   "filed_at": "2026-11-12T20:23:38",
+   "subject": "Analysts/Institutional Investor Meet/Con. Call Updates",
+   "body": "Please note that the Company executives will be participating in the Institutional Investors' Meeting - JM Financial India Conference, scheduled to be held on November 17, 2026 at Mumbai. It is expected that the meeting with the investors will be on one-on-one basis.",
+   "expected": "investor_meetings"
+  },
+  {
+   "id": "NSE:106858492",
+   "symbol": "DMART",
+   "exchange": "NSE",
+   "filed_at": "2026-11-13T13:17:44",
+   "subject": "Change in Management",
+   "body": "Avenue Supermarts Limited has informed the Exchange about Changes in Senior Management Personnel of the Company",
+   "expected": "management_change"
+  },
+  {
+   "id": "NSE:106858710",
+   "symbol": "IRCTC",
+   "exchange": "NSE",
+   "filed_at": "2026-11-13T15:11:44",
+   "subject": "Copy of Newspaper Publication",
+   "body": "Indian Railway Catering And Tourism Corporation Limited has informed the Exchange about copy of Newspaper Publication regarding Q2FY27 Results.",
+   "expected": "unclassified"
+  },
+  {
+   "id": "NSE:106858736",
+   "symbol": "ITC",
+   "exchange": "NSE",
+   "filed_at": "2026-11-13T15:19:16",
+   "subject": "ESOP/ESOS/ESPS",
+   "body": "ITC Limited has informed the Exchange regarding Allotment of 785300  Shares.",
+   "expected": "unclassified"
+  },
+  {
+   "id": "NSE:106858944",
+   "symbol": "HDFCBANK",
+   "exchange": "NSE",
+   "filed_at": "2026-11-13T16:35:23",
+   "subject": "Change in Director(s)",
+   "body": "HDFC Bank Limited has informed the Exchange regarding Change in Director(s) of the company.",
+   "expected": "management_change"
+  },
+  {
+   "id": "NSE:106859406",
+   "symbol": "RELIANCE",
+   "exchange": "NSE",
+   "filed_at": "2026-11-13T18:25:01",
+   "subject": "Analysts/Institutional Investor Meet/Con. Call Updates",
+   "body": "Please note that the Company executives will be participating in the Institutional Investors' Meeting - Morgan Stanley 25th Annual Asia-Pacific Summit, scheduled to be held on November 18 & 19, 2026 at Singapore. It is expected that the meeting with the investors will be on one-on-one basis.",
+   "expected": "investor_meetings"
+  },
+  {
+   "id": "NSE:106860689",
+   "symbol": "BHARTIARTL",
+   "exchange": "NSE",
+   "filed_at": "2026-11-14T15:52:08",
+   "subject": "Copy of Newspaper Publication",
+   "body": "Bharti Airtel Limited has informed the Exchange about Copy of Newspaper Publication",
+   "expected": "unclassified"
+  }
+ ]
+}

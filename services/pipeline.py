@@ -67,8 +67,9 @@ def run(days: int) -> dict:
                     fail += 1; last = f"{type(e).__name__}: {e}"
                     say(f"{name}: {h['symbol']} FAILED {last}")
             status[name] = f"ok ({ok} symbols)" if not fail else f"{ok} ok, {fail} failed, last error: {last}"
-    filings, alerts = process(raw, bars)
     SNAP.mkdir(parents=True, exist_ok=True)
+    (SNAP / "raw_filings.json").write_text(json.dumps([f.model_dump(mode="json") for f in raw], indent=1))
+    filings, alerts = process(raw, bars)
     (SNAP / "filings.json").write_text(json.dumps([f.model_dump(mode="json") for f in filings], indent=1))
     (SNAP / "alerts.json").write_text(json.dumps([a.model_dump(mode="json") for a in alerts], indent=1))
     (SNAP / "prices.json").write_text(json.dumps({s: [b.model_dump(mode="json") for b in v] for s, v in bars.items()}))
@@ -80,7 +81,22 @@ def run(days: int) -> dict:
     return meta
 
 
+def reprocess() -> None:
+    """Re-run dedupe/classify/score/alerts over the stored raw filings and prices. No network."""
+    raw = [Filing(**f) for f in json.loads((SNAP / "raw_filings.json").read_text())]
+    bars = {s: [Bar(**b) for b in v] for s, v in json.loads((SNAP / "prices.json").read_text()).items()}
+    filings, alerts = process(raw, bars)
+    (SNAP / "filings.json").write_text(json.dumps([f.model_dump(mode="json") for f in filings], indent=1))
+    (SNAP / "alerts.json").write_text(json.dumps([a.model_dump(mode="json") for a in alerts], indent=1))
+    meta = json.loads((SNAP / "meta.json").read_text())
+    meta.update(filings_after_dedupe=len(filings), sent_to_llm=sum(f.classified_by == "none" for f in filings))
+    (SNAP / "meta.json").write_text(json.dumps(meta, indent=1))
+    print(f"reprocessed {len(raw)} raw filings -> {len(filings)}")
+
+
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--days", type=int, default=7)
-    run(ap.parse_args().days)
+    ap.add_argument("--reprocess", action="store_true")
+    args = ap.parse_args()
+    reprocess() if args.reprocess else run(args.days)

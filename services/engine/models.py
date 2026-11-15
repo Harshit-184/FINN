@@ -22,6 +22,7 @@ class Filing(BaseModel):
     filed_at: datetime                        # IST, naive
     subject: str
     body: str = ""
+    headline: str = ""                        # what the card shows: the body without exchange boilerplate
     raw_category: str = ""                    # exchange's own category / subcategory
     pdf_url: Optional[str] = None
     source_url: Optional[str] = None

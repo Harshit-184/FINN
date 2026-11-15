@@ -28,6 +28,7 @@ export default function BriefPage() {
           <header>
             <h1 className="text-[26px] font-semibold leading-[1.15] tracking-tight">{data.headline}</h1>
             <div className="mt-2"><Status source={source} asOf={data.as_of} sample={data.sample} /></div>
+            {data.note && <p className="mt-1 text-xs text-dim">{data.note}</p>}
           </header>
 
           {data.needs_attention.length > 0 && (
@@ -72,7 +73,7 @@ export default function BriefPage() {
                 <ul className="divide-y divide-line border-b border-line">
                   {data.routine.map((c) => (
                     <li key={c.id} className="flex gap-2 py-2 text-xs text-dim">
-                      <span className="num w-24 shrink-0">{c.symbol}</span><span className="truncate">{c.subject}</span>
+                      <span className="num w-24 shrink-0">{c.symbol}</span><span className="truncate">{c.headline || c.subject}</span>
                     </li>
                   ))}
                 </ul>

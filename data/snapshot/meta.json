@@ -1,0 +1,13 @@
+{
+ "generated_at": "2026-11-15T17:07:00",
+ "from": "2026-11-08",
+ "to": "2026-11-15",
+ "sources": {
+  "prices": "ok (18/18 symbols)",
+  "nse": "ok (18 symbols)",
+  "bse": "blocked (HTTP 403 from api.bseindia.com); NSE is the source for this snapshot"
+ },
+ "filings_raw": 41,
+ "filings_after_dedupe": 41,
+ "sent_to_llm": 3
+}

@@ -34,11 +34,17 @@ materiality:
 # Patterns are case-insensitive regexes run on "raw category | subject | body".
 rules:
   - {category: unclassified, why: routine compliance,
-     any: ['compliance certificate', 'regulation 74\(5\)', 'newspaper (publication|advertisement)', 'esop|esos|employee stock option', 'trading window', 'loss of share certificate', 'duplicate share certificate', 'investor grievance', 'certificate under reg']}
+     any: ['compliance certificate', 'regulation 74\(5\)', 'newspaper (publication|advertisement)', 'esop|esos|employee stock option', 'trading window', 'loss of share certificate', 'duplicate share certificate', 'investor grievance', 'certificate under reg',
+           '(redemption|repayment) of (commercial paper|debentures?|ncds?)']}
   - {category: earnings_call, any: ['transcript', 'audio recording', 'earnings (conference )?call', 'con(ference)? ?call']}
   - {category: investor_meetings, any: ['analysts?[ /]+(institutional )?investors? meet', 'investor (meet|conference|presentation)', 'schedule of (analyst|investor)']}
+  # NSE's subject is generic ("Outcome of Board Meeting", "General Updates"); the detail is in the body text.
+  - {category: press_release, why: press release about results, any: ['press release'], all: ['financial results?|audited|unaudited']}
   - {category: results, any: ['financial results?', 'unaudited .*results', 'audited .*results'],
-     none: ['intimation of (board meeting|date)', 'notice of board meeting', 'board meeting intimation', 'to consider']}
+     none: ['intimation of (board meeting|date)', 'notice of board meeting', 'board meeting intimation', 'to consider',
+            'results? issued by', 'reference to the financial results']}
+  - {category: management_change, why: exchange tags it as a management change,
+     any: ['change in (directors?|director\(s\)|management|key managerial)', 'senior management personnel']}
   - {category: management_change, any: ['resign', 'appoint', 'cessation', 'change in (director|management|key managerial)', 'superannuat', 're-?designat'],
      all: ['director|ceo|cfo|chief|managing|chairman|chairperson|key managerial|kmp|company secretary|auditor|president']}
   - {category: m_and_a, any: ['acquisition', 'acquire', 'amalgamation', 'merger', 'demerger', 'scheme of arrangement', 'slump sale', 'divest', 'disinvest', 'stake sale', 'open offer']}
@@ -52,7 +58,7 @@ rules:
   - {category: capex, any: ['capex', 'capital expenditure', 'capacity (addition|expansion)', 'new (plant|facility|unit)', 'commissioning', 'commencement of (commercial )?production', 'greenfield', 'brownfield']}
   - {category: agm_egm, any: ['annual general meeting', '\bagm\b', '\begm\b', 'extra-?ordinary general meeting']}
   - {category: postal_ballot, any: ['postal ballot', 'e-?voting', 'scrutini[sz]er']}
-  - {category: press_release, any: ['press release', 'media release', 'order (win|received|inflow)', 'bags? .*order', 'wins? .*(order|contract)', 'monthly (sales|business) update', 'business update', 'sales (volume|update)', 'launch']}
+  - {category: press_release, any: ['press release', 'media release', 'order (win|received|inflow)', 'bagging', 'receiving of orders', 'bags? .*order', 'wins? .*(order|contract)', 'monthly (sales|business) update', 'business update', 'sales (volume|update)', 'launch']}
 
 # Severity S (0-100): first matching rule per category; default applies otherwise.
 severity:
@@ -91,7 +97,7 @@ severity:
   capex: {default: 55}
   press_release:
     rules:
-      - {score: 60, any: ['order', 'contract']}
+      - {score: 60, any: ['order', 'contract', 'financial results?']}
     default: 30
 # amount (Rs crore) as % of market cap -> severity floor, for m_and_a / fund_raise / capex / litigation
 size_bands: [{pct: 5.0, score: 100}, {pct: 1.0, score: 80}, {pct: 0.25, score: 60}]

@@ -45,3 +45,14 @@ def test_api_runs_without_llm_key_or_snapshot(monkeypatch, tmp_path):     # acce
     assert c.get("/brief").status_code == 200 and len(c.get("/portfolio").json()["holdings"]) == 18
     assert c.get("/alerts").json() == [] and c.get("/company/NOPE").status_code == 404
     assert c.get("/brief?window=2y").status_code == 400
+
+
+def test_weekend_window_reaches_back_to_the_last_session():
+    from datetime import date
+    f = [__import__("services.engine.score", fromlist=["score"]).score(
+        __import__("services.engine.classify", fromlist=["classify"]).classify(
+            filing("Outcome of Board Meeting - Financial Results", at="2026-11-13 17:00")))]
+    sunday = datetime(2026, 11, 15, 17, 0)
+    assert brief.build(f, [], sunday)["critical"] == []
+    out = brief.build(f, [], sunday, last_session=date(2026, 11, 13))
+    assert len(out["critical"]) == 1 and "closed since Fri 13 Nov" in out["note"]

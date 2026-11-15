@@ -31,7 +31,8 @@ def health():
 def brief(window: str = "24h"):
     if window not in WINDOWS:
         raise HTTPException(400, f"window must be one of {list(WINDOWS)}")
-    return brief_engine.build(store.filings(), store.alerts(), _now(), WINDOWS[window])
+    sessions = [b.d for series in store.prices().values() for b in series[-1:]]
+    return brief_engine.build(store.filings(), store.alerts(), _now(), WINDOWS[window], max(sessions, default=None))
 
 
 @app.get("/portfolio")

@@ -8,5 +8,4 @@ node_modules/
 !.env.example
 data/cache/
 *.pyc
-apps/web/public/snapshot/
 *.env

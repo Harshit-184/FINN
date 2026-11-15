@@ -1,0 +1,386 @@
+[
+ {
+  "symbol": "HDFCBANK",
+  "d": "2026-11-13",
+  "rule": "material_filing",
+  "headline": "HDFCBANK: management change filing",
+  "value": null,
+  "threshold": null,
+  "filing_ids": [
+   "NSE:106858944"
+  ],
+  "folded": 0
+ },
+ {
+  "symbol": "DMART",
+  "d": "2026-11-13",
+  "rule": "material_filing",
+  "headline": "DMART: management change filing",
+  "value": null,
+  "threshold": null,
+  "filing_ids": [
+   "NSE:106858492"
+  ],
+  "folded": 0
+ },
+ {
+  "symbol": "CDSL",
+  "d": "2026-11-13",
+  "rule": "volume_spike",
+  "headline": "CDSL volume 2.0x its 20-day average",
+  "value": 2.01,
+  "threshold": 2.0,
+  "filing_ids": [],
+  "folded": 0
+ },
+ {
+  "symbol": "TATAPOWER",
+  "d": "2026-11-12",
+  "rule": "volume_spike",
+  "headline": "TATAPOWER volume 3.7x its 20-day average",
+  "value": 3.73,
+  "threshold": 2.0,
+  "filing_ids": [],
+  "folded": 0
+ },
+ {
+  "symbol": "IRCTC",
+  "d": "2026-11-12",
+  "rule": "material_filing",
+  "headline": "IRCTC: results filing",
+  "value": null,
+  "threshold": null,
+  "filing_ids": [
+   "NSE:106857040"
+  ],
+  "folded": 0
+ },
+ {
+  "symbol": "HDFCBANK",
+  "d": "2026-11-12",
+  "rule": "material_filing",
+  "headline": "HDFCBANK: management change filing",
+  "value": null,
+  "threshold": null,
+  "filing_ids": [
+   "NSE:106857049"
+  ],
+  "folded": 0
+ },
+ {
+  "symbol": "CDSL",
+  "d": "2026-11-12",
+  "rule": "volume_spike",
+  "headline": "CDSL volume 3.3x its 20-day average",
+  "value": 3.27,
+  "threshold": 2.0,
+  "filing_ids": [],
+  "folded": 0
+ },
+ {
+  "symbol": "TATAPOWER",
+  "d": "2026-11-11",
+  "rule": "volume_spike",
+  "headline": "TATAPOWER volume 2.4x its 20-day average",
+  "value": 2.42,
+  "threshold": 2.0,
+  "filing_ids": [],
+  "folded": 0
+ },
+ {
+  "symbol": "TATAPOWER",
+  "d": "2026-11-11",
+  "rule": "material_filing",
+  "headline": "TATAPOWER: results filing",
+  "value": null,
+  "threshold": null,
+  "filing_ids": [
+   "NSE:106855371",
+   "NSE:106855625",
+   "NSE:106855670"
+  ],
+  "folded": 2
+ },
+ {
+  "symbol": "TATAPOWER",
+  "d": "2026-11-11",
+  "rule": "combo",
+  "headline": "TATAPOWER: critical filing and volume spike on the same day",
+  "value": null,
+  "threshold": null,
+  "filing_ids": [
+   "NSE:106855371"
+  ],
+  "folded": 0
+ },
+ {
+  "symbol": "IRCTC",
+  "d": "2026-11-11",
+  "rule": "volume_spike",
+  "headline": "IRCTC volume 6.0x its 20-day average",
+  "value": 5.99,
+  "threshold": 2.0,
+  "filing_ids": [],
+  "folded": 0
+ },
+ {
+  "symbol": "CDSL",
+  "d": "2026-11-11",
+  "rule": "volume_spike",
+  "headline": "CDSL volume 3.3x its 20-day average",
+  "value": 3.28,
+  "threshold": 2.0,
+  "filing_ids": [],
+  "folded": 0
+ },
+ {
+  "symbol": "TITAN",
+  "d": "2026-11-06",
+  "rule": "volume_spike",
+  "headline": "TITAN volume 5.6x its 20-day average",
+  "value": 5.55,
+  "threshold": 2.0,
+  "filing_ids": [],
+  "folded": 0
+ },
+ {
+  "symbol": "TATAPOWER",
+  "d": "2026-11-06",
+  "rule": "volume_spike",
+  "headline": "TATAPOWER volume 2.3x its 20-day average",
+  "value": 2.33,
+  "threshold": 2.0,
+  "filing_ids": [],
+  "folded": 0
+ },
+ {
+  "symbol": "HDFCBANK",
+  "d": "2026-11-06",
+  "rule": "volume_spike",
+  "headline": "HDFCBANK volume 2.3x its 20-day average",
+  "value": 2.31,
+  "threshold": 2.0,
+  "filing_ids": [],
+  "folded": 0
+ },
+ {
+  "symbol": "SUNPHARMA",
+  "d": "2026-11-05",
+  "rule": "volume_spike",
+  "headline": "SUNPHARMA volume 2.0x its 20-day average",
+  "value": 2.03,
+  "threshold": 2.0,
+  "filing_ids": [],
+  "folded": 0
+ },
+ {
+  "symbol": "MARUTI",
+  "d": "2026-11-05",
+  "rule": "volume_spike",
+  "headline": "MARUTI volume 2.6x its 20-day average",
+  "value": 2.59,
+  "threshold": 2.0,
+  "filing_ids": [],
+  "folded": 0
+ },
+ {
+  "symbol": "MARUTI",
+  "d": "2026-11-05",
+  "rule": "price_move",
+  "headline": "MARUTI +5.5% close-to-close",
+  "value": 5.48,
+  "threshold": 4.0,
+  "filing_ids": [],
+  "folded": 0
+ },
+ {
+  "symbol": "IRCTC",
+  "d": "2026-11-05",
+  "rule": "volume_spike",
+  "headline": "IRCTC volume 2.4x its 20-day average",
+  "value": 2.38,
+  "threshold": 2.0,
+  "filing_ids": [],
+  "folded": 0
+ },
+ {
+  "symbol": "HDFCBANK",
+  "d": "2026-11-05",
+  "rule": "volume_spike",
+  "headline": "HDFCBANK volume 2.2x its 20-day average",
+  "value": 2.17,
+  "threshold": 2.0,
+  "filing_ids": [],
+  "folded": 0
+ },
+ {
+  "symbol": "ETERNAL",
+  "d": "2026-11-05",
+  "rule": "price_move",
+  "headline": "ETERNAL +4.0% close-to-close",
+  "value": 4.01,
+  "threshold": 4.0,
+  "filing_ids": [],
+  "folded": 0
+ },
+ {
+  "symbol": "BAJFINANCE",
+  "d": "2026-11-05",
+  "rule": "volume_spike",
+  "headline": "BAJFINANCE volume 3.5x its 20-day average",
+  "value": 3.45,
+  "threshold": 2.0,
+  "filing_ids": [],
+  "folded": 0
+ },
+ {
+  "symbol": "BAJFINANCE",
+  "d": "2026-11-05",
+  "rule": "price_move",
+  "headline": "BAJFINANCE +7.6% close-to-close",
+  "value": 7.65,
+  "threshold": 4.0,
+  "filing_ids": [],
+  "folded": 0
+ },
+ {
+  "symbol": "TITAN",
+  "d": "2026-11-04",
+  "rule": "price_move",
+  "headline": "TITAN +4.2% close-to-close",
+  "value": 4.22,
+  "threshold": 4.0,
+  "filing_ids": [],
+  "folded": 0
+ },
+ {
+  "symbol": "SUNPHARMA",
+  "d": "2026-11-04",
+  "rule": "volume_spike",
+  "headline": "SUNPHARMA volume 2.8x its 20-day average",
+  "value": 2.8,
+  "threshold": 2.0,
+  "filing_ids": [],
+  "folded": 0
+ },
+ {
+  "symbol": "RELIANCE",
+  "d": "2026-11-03",
+  "rule": "volume_spike",
+  "headline": "RELIANCE volume 2.3x its 20-day average",
+  "value": 2.27,
+  "threshold": 2.0,
+  "filing_ids": [],
+  "folded": 0
+ },
+ {
+  "symbol": "CDSL",
+  "d": "2026-11-03",
+  "rule": "volume_spike",
+  "headline": "CDSL volume 3.5x its 20-day average",
+  "value": 3.53,
+  "threshold": 2.0,
+  "filing_ids": [],
+  "folded": 0
+ },
+ {
+  "symbol": "CDSL",
+  "d": "2026-11-03",
+  "rule": "price_move",
+  "headline": "CDSL +5.4% close-to-close",
+  "value": 5.43,
+  "threshold": 4.0,
+  "filing_ids": [],
+  "folded": 0
+ },
+ {
+  "symbol": "BHARTIARTL",
+  "d": "2026-11-03",
+  "rule": "volume_spike",
+  "headline": "BHARTIARTL volume 2.1x its 20-day average",
+  "value": 2.06,
+  "threshold": 2.0,
+  "filing_ids": [],
+  "folded": 0
+ },
+ {
+  "symbol": "SUNPHARMA",
+  "d": "2026-11-02",
+  "rule": "volume_spike",
+  "headline": "SUNPHARMA volume 2.1x its 20-day average",
+  "value": 2.12,
+  "threshold": 2.0,
+  "filing_ids": [],
+  "folded": 0
+ },
+ {
+  "symbol": "RELIANCE",
+  "d": "2026-11-02",
+  "rule": "volume_spike",
+  "headline": "RELIANCE volume 5.8x its 20-day average",
+  "value": 5.83,
+  "threshold": 2.0,
+  "filing_ids": [],
+  "folded": 0
+ },
+ {
+  "symbol": "RELIANCE",
+  "d": "2026-11-02",
+  "rule": "price_move",
+  "headline": "RELIANCE +11.6% close-to-close",
+  "value": 11.6,
+  "threshold": 4.0,
+  "filing_ids": [],
+  "folded": 0
+ },
+ {
+  "symbol": "DIXON",
+  "d": "2026-11-02",
+  "rule": "volume_spike",
+  "headline": "DIXON volume 6.0x its 20-day average",
+  "value": 5.95,
+  "threshold": 2.0,
+  "filing_ids": [],
+  "folded": 0
+ },
+ {
+  "symbol": "DIXON",
+  "d": "2026-11-02",
+  "rule": "price_move",
+  "headline": "DIXON +12.0% close-to-close",
+  "value": 11.99,
+  "threshold": 4.0,
+  "filing_ids": [],
+  "folded": 0
+ },
+ {
+  "symbol": "CDSL",
+  "d": "2026-11-02",
+  "rule": "volume_spike",
+  "headline": "CDSL volume 3.0x its 20-day average",
+  "value": 3.02,
+  "threshold": 2.0,
+  "filing_ids": [],
+  "folded": 0
+ },
+ {
+  "symbol": "SUNPHARMA",
+  "d": "2026-10-30",
+  "rule": "volume_spike",
+  "headline": "SUNPHARMA volume 3.4x its 20-day average",
+  "value": 3.43,
+  "threshold": 2.0,
+  "filing_ids": [],
+  "folded": 0
+ },
+ {
+  "symbol": "DIXON",
+  "d": "2026-10-30",
+  "rule": "price_move",
+  "headline": "DIXON -4.2% close-to-close",
+  "value": -4.25,
+  "threshold": 4.0,
+  "filing_ids": [],
+  "folded": 0
+ }
+]

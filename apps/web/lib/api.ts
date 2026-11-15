@@ -20,7 +20,7 @@ export async function load<T>(path: string, snapshotFile: string): Promise<Loade
 }
 
 export type Card = {
-  id: string; symbol: string; company: string; subject: string; body: string; filed_at: string;
+  id: string; symbol: string; company: string; subject: string; headline: string; body: string; filed_at: string;
   category: string; tier: "critical" | "notable" | "routine"; score: number; score_terms: Record<string, number>;
   direction: "positive" | "negative" | "mixed" | "neutral"; pillar_name: string | null; pillar_evidence: string | null;
   revised: boolean; amends: string | null; also_on: string[]; exchange: string; pdf_url: string | null;
@@ -31,7 +31,7 @@ export type EventPrice = { before: { d: string; close: number }; t1: Leg | null;
 type Leg = { d: string; close: number; pct: number };
 export type AlertItem = { symbol: string; d: string; rule: string; headline: string; value: number | null; threshold: number | null; folded: number };
 export type Brief = {
-  as_of: string; window_hours: number; headline: string; sample?: boolean;
+  as_of: string; window_hours: number; headline: string; note?: string | null; sample?: boolean;
   needs_attention: { symbol: string; company: string; reasons: string[]; direction: Card["direction"] }[];
   critical: Card[]; notable: Card[]; routine: Card[]; alerts: AlertItem[];
 };
