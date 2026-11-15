@@ -5,6 +5,9 @@ tiers: {critical: 70, notable: 40}
 confidence_score: {high: 100, medium: 60, low: 30}
 override_categories: [litigation, pledging, credit_rating]   # S >= 80 => Critical whatever the exposure
 override_severity: 80
+# P and C alone contribute up to 30 points, so a dividend from the largest holding would score 40+ and
+# read as Notable. The formula ranks items; this table sets the ceiling for categories that are routine by nature.
+tier_caps: {dividend: routine, bonus_split: routine, agm_egm: routine, postal_ballot: routine, investor_meetings: routine, unclassified: routine}
 
 materiality:
   results: 90
@@ -75,6 +78,12 @@ severity:
       - {score: 90, any: ['sebi order', 'warning letter', 'search (and|&) seizure', 'nclt']}
       - {score: 60, any: ['tax demand', 'penalty', 'show cause', 'demand (order|notice)']}
     default: 50
+  dividend: {default: 20}
+  bonus_split: {default: 20}
+  earnings_call:
+    rules:
+      - {score: 60, any: ['transcript']}
+    default: 10
   m_and_a: {default: 70}       # raised by deal size as % of market cap when the amount is known
   fund_raise: {default: 55}
   capex: {default: 55}

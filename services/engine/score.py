@@ -77,7 +77,8 @@ def score(f: Filing, market_cap_cr: float | None = None) -> Filing:
     if f.category in cfg["override_categories"] and terms["S"] >= cfg["override_severity"]:
         f.tier = "critical"
         f.score_terms["override"] = 1.0
-    # Unclassified compliance noise is never promoted by exposure alone.
-    if f.category == "unclassified":
-        f.tier = "routine"
+    # Categories that are routine by nature are capped, whatever the exposure (see tier_caps in the config).
+    cap = cfg.get("tier_caps", {}).get(f.category)
+    if cap == "routine" or (cap == "notable" and f.tier == "critical"):
+        f.tier = cap
     return f

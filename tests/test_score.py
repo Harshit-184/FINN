@@ -56,3 +56,12 @@ def test_deal_size_raises_severity():
 
 def test_market_reaction_is_not_a_score_term():
     assert set(run("Financial Results").score_terms) <= {"M", "S", "T", "P", "C", "override"}
+
+
+def test_dividend_from_the_largest_holding_stays_routine():
+    f = run("Declaration of Interim Dividend", symbol="RELIANCE")
+    assert f.tier == "routine" and f.score < 45
+
+
+def test_transcript_landing_lifts_an_earnings_call():
+    assert run("Transcript of Earnings Call for Q2 FY27").score > run("Intimation of Earnings Conference Call").score
