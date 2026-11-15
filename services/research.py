@@ -17,7 +17,7 @@ from .llm import router
 from .pipeline import say
 
 OUT = Path(__file__).resolve().parents[1] / "data" / "research"
-PROMPT = (Path(__file__).parent / "llm" / "prompts" / "guidance_v2.txt").read_text()
+PROMPT = (Path(__file__).parent / "llm" / "prompts" / "guidance_v3.txt").read_text()
 
 
 def pdf_pages(data: bytes) -> list[str]:
@@ -42,27 +42,72 @@ def grounded(item: dict, pages: list[str]) -> int | None:
     return None
 
 
-def extract(client, symbol: str, name: str, t: dict) -> tuple[list[GuidanceItem], dict]:
-    stated_in = screener.call_period(t["label"])
-    info = {"label": t["label"], "period": stated_in, "url": t["url"], "pages": 0, "extracted": 0, "kept": 0, "dropped": []}
-    try:
-        data = get(client, t["url"], headers={"User-Agent": UA, "Referer": "https://www.bseindia.com/"}, ttl=365 * 86400, as_json=False)
-        pages = pdf_pages(data)
-    except Exception as e:
-        info["error"] = f"could not read transcript: {type(e).__name__}"
-        return [], info
-    info["pages"] = len(pages)
-    text = "\n".join(f"[PAGE {i + 1}]\n{p}" for i, p in enumerate(pages))[:180_000]
-    raw = router.ask_json(client, PROMPT.format(company=name, symbol=symbol, call_period=periods.label(stated_in), text=text),
-                          doc_hash=hashlib.sha1(data).hexdigest(), prompt_version="guidance_v2")
+CUE = re.compile(r"guidance|outlook|expect|target|aspir|aim to|we (?:will|should|plan|intend)|going forward|next (?:year|fiscal|quarter)|"
+                 r"current (?:year|fiscal)|full year|by (?:the )?end of|fy ?'?\d\d|fiscal \d\d", re.I)
+PAGE_BUDGET = 36_000          # characters per transcript sent to the model (about 9k tokens)
+
+
+STRONG = re.compile(r"guidance|guiding|guided", re.I)
+MEDIUM = re.compile(r"outlook|target|aspir|we expect|expected to|margin band", re.I)
+QUANT = re.compile(r"\d(?:\.\d+)?\s?%|\bcrores?\b|\bbps\b|basis points", re.I)
+
+
+def page_score(text: str) -> int:
+    """Pages where management states a target say 'guidance' and carry a percentage or a rupee amount."""
+    if not QUANT.search(text) or not (STRONG.search(text) or MEDIUM.search(text) or CUE.search(text)):
+        return 0
+    return 6 * len(STRONG.findall(text)) + 3 * len(MEDIUM.findall(text)) + len(CUE.findall(text)) + min(len(QUANT.findall(text)), 5)
+
+
+def relevant_pages(pages: list[str], budget: int = PAGE_BUDGET) -> list[int]:
+    """Guidance sits on a handful of pages. Rank pages and keep the best within the budget, so four transcripts
+    fit in one model call."""
+    scored = sorted(((page_score(p), -i) for i, p in enumerate(pages) if page_score(p) > 0), reverse=True)
+    keep, used = [], 0
+    for _, neg in scored:
+        i = -neg
+        if used + len(pages[i]) > budget and keep:
+            continue
+        keep.append(i); used += len(pages[i])
+    return sorted(keep)
+
+
+def extract_all(client, symbol: str, name: str, calls: list[dict]) -> tuple[list[GuidanceItem], list[dict]]:
+    """One model call per company: every transcript, relevant pages only. Request count, not tokens, is the
+    binding limit on a free tier, and this turns 4 requests into 1."""
+    docs, blocks, hashes, texts = [], [], [], {}
+    for n, t in enumerate(calls, 1):
+        info = {"n": n, "label": t["label"], "period": screener.call_period(t["label"]), "url": t["url"],
+                "pages": 0, "pages_sent": 0, "extracted": 0, "kept": 0, "dropped": []}
+        docs.append(info)
+        try:
+            data = get(client, t["url"], headers={"User-Agent": UA, "Referer": "https://www.bseindia.com/"}, ttl=365 * 86400, as_json=False)
+            pages = pdf_pages(data)
+        except Exception as e:
+            info["error"] = f"could not read transcript: {type(e).__name__}"
+            continue
+        keep = relevant_pages(pages)
+        info["pages"], info["pages_sent"] = len(pages), len(keep)
+        texts[n] = pages
+        hashes.append(hashlib.sha1(data).hexdigest())
+        blocks.append(f"[DOC {n}] call discussing {periods.label(info['period'])}\n" + "\n".join(f"[PAGE {i + 1}]\n{pages[i]}" for i in keep))
+    if not blocks:
+        return [], docs
+    raw = router.ask_json(client, PROMPT.format(company=name, symbol=symbol, text="\n\n".join(blocks)),
+                          doc_hash=hashlib.sha1("".join(hashes).encode()).hexdigest(), prompt_version="guidance_v3")
     if raw is None:
-        info["error"] = "model unavailable or returned invalid output"
-        say(f"llm error: {router.last_error} | tried: {router._candidates.get('cheap')}")
-        return [], info
+        say(f"llm error: {router.last_error}")
+        for d in docs:
+            d.setdefault("error", "model unavailable or returned invalid output")
+        return [], docs
     items = []
-    info["extracted"] = len(raw)
+    by_n = {d["n"]: d for d in docs}
     for r in raw:
-        page = grounded(r, pages)
+        info = by_n.get(int(r.get("doc") or 0))
+        if not info or info["n"] not in texts:
+            continue
+        info["extracted"] += 1
+        page = grounded(r, texts[info["n"]])
         try:
             if page is None:
                 raise ValueError("quote not found in the transcript")
@@ -71,8 +116,8 @@ def extract(client, symbol: str, name: str, t: dict) -> tuple[list[GuidanceItem]
             periods.parse(r["period"])
             said = f"{r.get('metric_label', '')} {r['quote']}".lower()
             metric, caveat = r["metric"], ""
-            # Two traps found on the first live run (Infosys): growth guided in constant currency is not the INR
-            # growth in the filed statements, and "operating margin" is EBIT margin, not EBITDA margin.
+            # Traps found on the first live runs: a segment target judged against company totals (Dixon), growth guided
+            # in constant currency set beside rupee growth, and "operating margin" read as EBITDA margin (Infosys).
             segment = str(r.get("segment") or "this business") if r.get("scope") != "company" else ""
             if segment:
                 caveat = f"This target is for {segment}, not the whole company. Segment actuals are not in the structured data yet, so it is not judged against company totals."
@@ -80,15 +125,16 @@ def extract(client, symbol: str, name: str, t: dict) -> tuple[list[GuidanceItem]
                 caveat = "Guidance is in constant currency; filed statements report rupee revenue, so the two are not comparable."
             if not segment and r["kind"] == "margin" and re.search(r"operating margin|ebit margin|\bebit\b", said) and "ebitda" not in said:
                 metric = "ebit"
-            items.append(GuidanceItem(company=symbol, metric=metric, caveat=caveat, segment=segment, kind=r["kind"], low=float(r["low"]), high=float(r["high"]),
-                                      unit="INR_CRORE" if r["kind"] == "absolute" else "PCT", period=r["period"], stated_in=stated_in,
-                                      speaker=str(r.get("speaker", "")), quote=r["quote"], document=t["url"], page=page,
-                                      supersedes_explicitly=bool(r.get("revises_earlier")), withdrawn=bool(r.get("withdrawn"))))
+            items.append(GuidanceItem(company=symbol, metric=metric, caveat=caveat, segment=segment, kind=r["kind"],
+                                      low=float(r["low"]), high=float(r["high"]), unit="INR_CRORE" if r["kind"] == "absolute" else "PCT",
+                                      period=r["period"], stated_in=info["period"], speaker=str(r.get("speaker", "")), quote=r["quote"],
+                                      document=info["url"], page=page, supersedes_explicitly=bool(r.get("revises_earlier")),
+                                      withdrawn=bool(r.get("withdrawn"))))
+            info["kept"] += 1
         except (KeyError, ValueError, TypeError) as e:
-            info["dropped"].append({"label": r.get("metric_label") or r.get("metric"), "why": str(e), "quote": r.get("quote", "")[:200],
+            info["dropped"].append({"label": r.get("metric_label") or r.get("metric"), "why": str(e), "quote": str(r.get("quote", ""))[:200],
                                     "page": page, "period": r.get("period")})
-    info["kept"] = len(items)
-    return items, info
+    return items, docs
 
 
 def research(client, symbol: str) -> dict:
@@ -107,13 +153,9 @@ def research(client, symbol: str) -> dict:
             facts.append(f.model_copy(update={"metric": "ebit", "value": f.value - dep[(f.period, f.basis)], "source_type": "derived"}))
     calls = screener.transcripts(soup)
     say(f"{symbol}: {len(facts)} facts ({basis}), {len(calls)} transcripts")
-    items, docs = [], []
-    for t in calls:
-        got, info = extract(client, symbol, name, t)
-        if not info.get("error"):
-            say(f"model used: {router._candidates.get('cheap', ['?'])[0]}")
-        say(f"{symbol}: {t['label']} pages={info['pages']} extracted={info['extracted']} kept={info['kept']} {info.get('error', '')}")
-        items += got; docs.append(info)
+    items, docs = extract_all(client, symbol, name, calls)
+    for d in docs:
+        say(f"{symbol}: {d['label']} pages={d['pages']} sent={d['pages_sent']} extracted={d['extracted']} kept={d['kept']} {d.get('error', '')}")
     latest = max((d["period"] for d in docs if not d.get("error")), key=match.order, default=None)
     verdicts = match.scorecard(items, [f for f in facts if f.basis == basis], latest)
     quarters = sorted({f.period for f in facts if f.period_type == "quarterly"}, key=match.order)

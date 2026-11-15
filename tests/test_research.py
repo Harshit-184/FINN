@@ -25,3 +25,12 @@ def test_a_quote_that_is_not_in_the_document_is_dropped():           # grounding
     pages = ["Welcome to the call.", "We expect revenue growth of 8 to 10 percent in fiscal 2027, in constant currency."]
     assert grounded({"quote": "We expect revenue growth of 8 to 10 percent in fiscal 2027", "page": 1}, pages) == 2
     assert grounded({"quote": "We will double revenue by fiscal 2028 for sure, no doubt", "page": 2}, pages) is None
+
+
+def test_only_pages_with_forward_looking_numbers_are_sent():
+    from services.research import relevant_pages
+    pages = ["Good evening and welcome to the call.", "Revenue was 1,000 crore last quarter.",
+             "We expect revenue growth of 8% to 10% in FY27 and our guidance is unchanged.", "Thank you all."]
+    assert relevant_pages(pages) == [2]
+    big = ["We expect 10% growth next year. " * 400] * 5
+    assert len(relevant_pages(big, budget=30_000)) == 2          # stays within the budget
