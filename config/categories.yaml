@@ -1,0 +1,94 @@
+# Classification rules and scoring settings. Order matters: first match wins.
+# Weights are starting settings, not validated parameters.
+weights: {M: 0.30, S: 0.20, T: 0.20, P: 0.15, C: 0.15}
+tiers: {critical: 70, notable: 40}
+confidence_score: {high: 100, medium: 60, low: 30}
+override_categories: [litigation, pledging, credit_rating]   # S >= 80 => Critical whatever the exposure
+override_severity: 80
+
+materiality:
+  results: 90
+  m_and_a: 85
+  management_change: 80
+  litigation: 75
+  fund_raise: 70
+  pledging: 70
+  credit_rating: 60
+  capex: 60
+  insider_trading: 50
+  bonus_split: 40
+  dividend: 35
+  press_release: 30
+  earnings_call: 25
+  investor_meetings: 10
+  agm_egm: 10
+  postal_ballot: 10
+  unclassified: 0
+
+# any: at least one pattern must hit; all: every pattern must hit; none: no pattern may hit.
+# Patterns are case-insensitive regexes run on "raw category | subject | body".
+rules:
+  - {category: unclassified, why: routine compliance,
+     any: ['compliance certificate', 'regulation 74\(5\)', 'newspaper (publication|advertisement)', 'esop|esos|employee stock option', 'trading window', 'loss of share certificate', 'duplicate share certificate', 'investor grievance', 'certificate under reg']}
+  - {category: earnings_call, any: ['transcript', 'audio recording', 'earnings (conference )?call', 'con(ference)? ?call']}
+  - {category: investor_meetings, any: ['analysts?[ /]+(institutional )?investors? meet', 'investor (meet|conference|presentation)', 'schedule of (analyst|investor)']}
+  - {category: results, any: ['financial results?', 'unaudited .*results', 'audited .*results'],
+     none: ['intimation of (board meeting|date)', 'notice of board meeting', 'board meeting intimation', 'to consider']}
+  - {category: management_change, any: ['resign', 'appoint', 'cessation', 'change in (director|management|key managerial)', 'superannuat', 're-?designat'],
+     all: ['director|ceo|cfo|chief|managing|chairman|chairperson|key managerial|kmp|company secretary|auditor|president']}
+  - {category: m_and_a, any: ['acquisition', 'acquire', 'amalgamation', 'merger', 'demerger', 'scheme of arrangement', 'slump sale', 'divest', 'disinvest', 'stake sale', 'open offer']}
+  - {category: litigation, any: ['litigation', 'show cause', 'penalty', 'tax demand', 'demand (order|notice)', 'sebi order', 'nclt', 'arbitration', 'warning letter', 'form 483', 'adjudicat', 'dispute', 'search (and|&) seizure']}
+  - {category: pledging, any: ['pledge', 'encumbrance', 'invocation']}
+  - {category: credit_rating, any: ['credit rating', 'rating (action|rationale|upgrade|downgrade|reaffirm)', '\b(crisil|icra|care ratings|india ratings|fitch|moody|s&p)\b']}
+  - {category: fund_raise, any: ['qip', 'qualified institutions? placement', 'rights issue', 'preferential (issue|allotment)', 'non-?convertible debenture', '\bncds?\b', 'commercial paper', 'fund ?rais', 'raising of funds', 'issue of (securities|bonds)']}
+  - {category: insider_trading, any: ['regulation 7\(2\)', 'insider trading', 'sast', 'reg(ulation)?\.? 29']}
+  - {category: bonus_split, any: ['bonus (issue|shares)', 'stock split', 'sub-?division of (equity )?shares']}
+  - {category: dividend, any: ['dividend', 'record date', 'book closure']}
+  - {category: capex, any: ['capex', 'capital expenditure', 'capacity (addition|expansion)', 'new (plant|facility|unit)', 'commissioning', 'commencement of (commercial )?production', 'greenfield', 'brownfield']}
+  - {category: agm_egm, any: ['annual general meeting', '\bagm\b', '\begm\b', 'extra-?ordinary general meeting']}
+  - {category: postal_ballot, any: ['postal ballot', 'e-?voting', 'scrutini[sz]er']}
+  - {category: press_release, any: ['press release', 'media release', 'order (win|received|inflow)', 'bags? .*order', 'wins? .*(order|contract)', 'monthly (sales|business) update', 'business update', 'sales (volume|update)', 'launch']}
+
+# Severity S (0-100): first matching rule per category; default applies otherwise.
+severity:
+  default: 50
+  results: {default: 70}
+  management_change:
+    rules:
+      - {score: 100, any: ['\bceo\b', 'chief executive', '\bcfo\b', 'chief financial', 'managing director', '\bmd\b', '\bcmd\b', 'chairman', 'chairperson']}
+      - {score: 70,  any: ['whole-?time director', 'executive director', 'statutory auditor', 'auditor']}
+      - {score: 40,  any: ['independent director', 'non-?executive', 'company secretary', 'nominee']}
+    default: 50
+  credit_rating:
+    rules:
+      - {score: 90, any: ['downgrad', 'negative', 'default', 'watch with negative']}
+      - {score: 60, any: ['upgrad', 'positive']}
+      - {score: 25, any: ['reaffirm', 'assigned']}
+    default: 40
+  pledging:
+    rules:
+      - {score: 90, any: ['invocation', 'creation of pledge', 'pledge creat', 'encumbrance creat']}
+      - {score: 30, any: ['release', 'revocation']}
+    default: 60
+  litigation:
+    rules:
+      - {score: 90, any: ['sebi order', 'warning letter', 'search (and|&) seizure', 'nclt']}
+      - {score: 60, any: ['tax demand', 'penalty', 'show cause', 'demand (order|notice)']}
+    default: 50
+  m_and_a: {default: 70}       # raised by deal size as % of market cap when the amount is known
+  fund_raise: {default: 55}
+  capex: {default: 55}
+  press_release:
+    rules:
+      - {score: 60, any: ['order', 'contract']}
+    default: 30
+# amount (Rs crore) as % of market cap -> severity floor, for m_and_a / fund_raise / capex / litigation
+size_bands: [{pct: 5.0, score: 100}, {pct: 1.0, score: 80}, {pct: 0.25, score: 60}]
+
+alerts:
+  volume_multiple: 2.0
+  volume_window: 20
+  price_move_pct: 4.0
+  material_categories: [results, m_and_a, management_change, litigation, pledging]
+  cooldown: per_rule_per_stock_per_day
+  per_stock: {}     # e.g. ETERNAL: {price_move_pct: 6.0}

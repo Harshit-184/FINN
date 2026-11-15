@@ -1,0 +1,10 @@
+pydantic>=2.7
+pyyaml>=6
+fastapi>=0.111
+uvicorn>=0.30
+httpx>=0.27
+yfinance>=0.2.40
+pymupdf>=1.24
+lxml>=5
+beautifulsoup4>=4.12
+pytest>=8

@@ -1,0 +1,71 @@
+# Demo portfolio. Weights are ILLUSTRATIVE, not anyone's real holdings.
+# bse_code: validated by scripts/validate_portfolio.py before ingestion runs.
+# template: "financial" => bank/NBFC results template (no EBITDA).
+investor: demo
+holdings:
+  - {symbol: RELIANCE,   name: Reliance Industries,   sector: Conglomerate,          size: large, bse_code: 500325, weight: 10.0,
+     pillars: [{id: retail_jio, name: "Retail and Jio growth", keywords: [retail, jio, subscriber, arpu]},
+               {id: o2c_margin, name: "O2C margins", keywords: [refining, petrochemical, o2c, grm]},
+               {id: new_energy, name: "New energy capex on schedule", keywords: [new energy, solar, giga, hydrogen]}]}
+  - {symbol: HDFCBANK,   name: HDFC Bank,             sector: Private bank,          size: large, bse_code: 500180, weight: 9.0, template: financial,
+     pillars: [{id: deposits, name: "Deposit growth", keywords: [deposit, casa]},
+               {id: nim, name: "Net interest margin", keywords: [net interest margin, nim]},
+               {id: asset_quality, name: "Asset quality", keywords: [npa, slippage, provision, asset quality]}]}
+  - {symbol: INFY,       name: Infosys,               sector: IT services,           size: large, bse_code: 500209, weight: 8.0,
+     pillars: [{id: cc_growth, name: "Revenue growth in constant currency", keywords: [constant currency, revenue growth, guidance]},
+               {id: op_margin, name: "Operating margin band", keywords: [operating margin, margin band]},
+               {id: large_deals, name: "Large-deal wins", keywords: [large deal, tcv, deal win]}]}
+  - {symbol: BHARTIARTL, name: Bharti Airtel,         sector: Telecom,               size: large, bse_code: 532454, weight: 7.0,
+     pillars: [{id: arpu, name: "ARPU expansion", keywords: [arpu, tariff]},
+               {id: leverage, name: "Deleveraging", keywords: [debt, prepay, spectrum dues, leverage]}]}
+  - {symbol: ITC,        name: ITC,                   sector: FMCG,                  size: large, bse_code: 500875, weight: 6.0,
+     pillars: [{id: cig_volume, name: "Cigarette volume and pricing", keywords: [cigarette, excise, gst]},
+               {id: fmcg_margin, name: "FMCG-others margin", keywords: [fmcg, margin]}]}
+  - {symbol: LT,         name: Larsen & Toubro,       sector: Engineering / EPC,     size: large, bse_code: 500510, weight: 6.0,
+     pillars: [{id: order_inflow, name: "Order inflow", keywords: [order, contract, wins]},
+               {id: core_margin, name: "Core E&C margin", keywords: [margin]}]}
+  - {symbol: BAJFINANCE, name: Bajaj Finance,         sector: NBFC,                  size: large, bse_code: 500034, weight: 6.0, template: financial,
+     pillars: [{id: aum, name: "AUM growth", keywords: [aum, assets under management, new loans]},
+               {id: credit_cost, name: "Credit cost", keywords: [credit cost, npa, provision]},
+               {id: funding, name: "Cost of funds", keywords: [rating, debenture, cost of funds, ncd]}]}
+  - {symbol: SUNPHARMA,  name: Sun Pharma,            sector: Pharma,                size: large, bse_code: 524715, weight: 5.0,
+     pillars: [{id: specialty, name: "Specialty portfolio growth", keywords: [specialty, ilumya, launch]},
+               {id: compliance, name: "USFDA compliance", keywords: [usfda, warning letter, form 483, inspection]}]}
+  - {symbol: TITAN,      name: Titan,                 sector: Consumer discretionary, size: large, bse_code: 500114, weight: 5.0,
+     pillars: [{id: jewellery, name: "Jewellery growth", keywords: [jewellery, tanishq, store]},
+               {id: margin, name: "Margin vs gold price", keywords: [margin, gold]}]}
+  - {symbol: MARUTI,     name: Maruti Suzuki,         sector: Auto,                  size: large, bse_code: 532500, weight: 5.0,
+     pillars: [{id: volumes, name: "Volumes and SUV mix", keywords: [sales, volume, production, suv]},
+               {id: capacity, name: "Capacity expansion", keywords: [plant, capacity, kharkhoda, gujarat]}]}
+  - {symbol: ETERNAL,    name: Eternal (formerly Zomato), sector: Internet / quick commerce, size: large, bse_code: 543320, weight: 5.0,
+     former_symbols: [ZOMATO],
+     pillars: [{id: qc_scale, name: "Quick-commerce scale-up", keywords: [blinkit, dark store, quick commerce]},
+               {id: profitability, name: "Path to profitability", keywords: [ebitda, profit, breakeven]}]}
+  - {symbol: DMART,      name: Avenue Supermarts,     sector: Retail,                size: large, bse_code: 540376, weight: 5.0,
+     pillars: [{id: stores, name: "Store additions", keywords: [store, stores]},
+               {id: sssg, name: "Revenue per store", keywords: [revenue from operations, standalone revenue]}]}
+  - {symbol: TATAPOWER,  name: Tata Power,            sector: Power,                 size: large, bse_code: 500400, weight: 4.0,
+     pillars: [{id: renewables, name: "Renewables capacity ramp", keywords: [renewable, solar, wind, mw, capacity]},
+               {id: leverage, name: "Leverage under control", keywords: [debt, rating, ncd]}]}
+  - {symbol: DIXON,      name: Dixon Technologies,    sector: Electronics manufacturing, size: mid, bse_code: 540699, weight: 4.0,
+     pillars: [{id: capacity, name: "Capacity ramp on schedule", keywords: [capacity, plant, facility, joint venture, jv]},
+               {id: margin, name: "Margin stability as mix shifts", keywords: [margin, mix]},
+               {id: working_capital, name: "Working capital", keywords: [working capital, receivable, inventory]}]}
+  - {symbol: POLYCAB,    name: Polycab India,         sector: Cables and wires,      size: mid,   bse_code: 542652, weight: 4.0,
+     pillars: [{id: capex, name: "Capex and capacity", keywords: [capex, capacity, plant]},
+               {id: revenue_target, name: "Stated revenue target", keywords: [revenue, target, project spring]}]}
+  - {symbol: KPITTECH,   name: KPIT Technologies,     sector: Auto software,         size: mid,   bse_code: 542651, weight: 4.0,
+     pillars: [{id: growth, name: "Revenue growth guidance", keywords: [guidance, revenue growth, constant currency]},
+               {id: deals, name: "Deal wins", keywords: [deal, tcv, engagement]}]}
+  - {symbol: IRCTC,      name: IRCTC,                 sector: PSU / travel,          size: mid,   bse_code: 542830, weight: 4.0,
+     pillars: [{id: ticketing, name: "Internet ticketing monopoly", keywords: [ticketing, convenience fee, policy]},
+               {id: governance, name: "Board stability", keywords: [director, chairman, cmd]}]}
+  - {symbol: CDSL,       name: CDSL,                  sector: Capital-market infra,  size: mid,   bse_code: null,   weight: 3.0,
+     # NSE-only listing: BSE is a shareholder, so there is no BSE scrip. Announcements come from NSE.
+     pillars: [{id: demat, name: "Demat account additions", keywords: [demat, accounts, bo accounts]},
+               {id: regulation, name: "Regulatory tariff risk", keywords: [sebi, tariff, charges]}]}
+research_only:
+  - {symbol: TRENT,      name: Trent,                 sector: Retail,       bse_code: 500251}
+  - {symbol: PERSISTENT, name: Persistent Systems,    sector: IT services,  bse_code: 533179}
+  - {symbol: DEEPAKNTR,  name: Deepak Nitrite,        sector: Chemicals,    bse_code: 506401}
+  - {symbol: HAL,        name: Hindustan Aeronautics, sector: PSU defence,  bse_code: 541154}

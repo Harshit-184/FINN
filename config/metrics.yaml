@@ -1,0 +1,22 @@
+# One dictionary for metric names, units and definitions. All money values are stored in INR crore.
+unit: INR_CRORE
+scale_to_crore: {rupees: 1.0e-7, thousands: 1.0e-4, lakhs: 0.01, lakh: 0.01, millions: 0.1, million: 0.1, crore: 1.0, crores: 1.0, billions: 100.0}
+metrics:
+  revenue:        {label: Revenue,        definition: Revenue from operations, template: [standard]}
+  other_income:   {label: Other income,   template: [standard, financial]}
+  finance_costs:  {label: Finance costs,  template: [standard]}
+  depreciation:   {label: Depreciation and amortisation, template: [standard]}
+  exceptional:    {label: Exceptional items, template: [standard, financial]}
+  ebitda:         {label: EBITDA, derived: true, template: [standard],
+                   definition: "PBT + finance costs + depreciation - other income, before exceptional items"}
+  pbt:            {label: PBT,            definition: Profit before tax (after exceptional items), template: [standard, financial]}
+  tax:            {label: Tax expense,    template: [standard, financial]}
+  pat:            {label: PAT,            definition: Profit after tax for the period, template: [standard, financial]}
+  # financial template (banks / NBFCs): no EBITDA
+  total_income:        {label: Total income, template: [financial]}
+  net_interest_income: {label: NII, definition: Interest earned - interest expended, template: [financial]}
+  ppop:                {label: Pre-provision operating profit, template: [financial]}
+  provisions:          {label: Provisions and contingencies, template: [financial]}
+headline: {standard: [revenue, ebitda, pbt, pat], financial: [total_income, net_interest_income, ppop, pat]}
+tolerances: {pat_identity_pct: 1.0, company_ebitda_gap_pct: 2.0, range_sanity_pct: 200.0}
+cash_quality_screen: 0.7
