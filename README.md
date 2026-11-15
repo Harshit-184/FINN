@@ -125,5 +125,5 @@ version and is cached by document hash. All calls so far have been on the Gemini
 
 ## Built with AI
 
-This project was built with Claude (planning and code) in one working day, 15 Nov 2026, with ChatGPT used for a
-review of the plan. The conversation exports are in `docs/ai-build-history/`.
+This project was built with Claude (planning and code), with ChatGPT used for a review of the plan.
+Links to the conversations are in `docs/ai-build-history/`.

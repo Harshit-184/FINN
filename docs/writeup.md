@@ -59,10 +59,9 @@ tracking at 21.0% after two quarters. Every line links to the transcript page it
 Parse results XBRL so headline numbers are exact and cross-checked; add segment actuals so segment targets can be
 judged; put ingestion on a schedule with the API deployed; then the Ask bar on top of the same research cards.
 
-I built this in one day (15 November) with Claude for planning and code, and used ChatGPT to review the plan.
+I built this with Claude for planning and code, and used ChatGPT to review the plan. The conversations are linked above.
 
 Thank you for the opportunity.
 
-[NAME]
-[ROLL NUMBER], IIT Delhi
-[PHONE]
+Harshit Choudhary
+2023ME10377, IIT Delhi
