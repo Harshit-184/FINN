@@ -69,7 +69,15 @@ def extract(client, symbol: str, name: str, t: dict) -> tuple[list[GuidanceItem]
             if r["metric"] == "other":
                 raise ValueError("metric has no verified actuals")
             periods.parse(r["period"])
-            items.append(GuidanceItem(company=symbol, metric=r["metric"], kind=r["kind"], low=float(r["low"]), high=float(r["high"]),
+            said = f"{r.get('metric_label', '')} {r['quote']}".lower()
+            metric, caveat = r["metric"], ""
+            # Two traps found on the first live run (Infosys): growth guided in constant currency is not the INR
+            # growth in the filed statements, and "operating margin" is EBIT margin, not EBITDA margin.
+            if r["kind"] == "growth" and re.search(r"constant.currency|\bcc\b", said):
+                caveat = "Guidance is in constant currency; filed statements report rupee revenue, so the two are not comparable."
+            if r["kind"] == "margin" and re.search(r"operating margin|ebit margin|\bebit\b", said) and "ebitda" not in said:
+                metric = "ebit"
+            items.append(GuidanceItem(company=symbol, metric=metric, caveat=caveat, kind=r["kind"], low=float(r["low"]), high=float(r["high"]),
                                       unit="INR_CRORE" if r["kind"] == "absolute" else "PCT", period=r["period"], stated_in=stated_in,
                                       speaker=str(r.get("speaker", "")), quote=r["quote"], document=t["url"], page=page,
                                       supersedes_explicitly=bool(r.get("revises_earlier")), withdrawn=bool(r.get("withdrawn"))))
@@ -89,8 +97,11 @@ def research(client, symbol: str) -> dict:
     name = (company(symbol) or {}).get("name") or (soup.select_one("h1").get_text(strip=True) if soup.select_one("h1") else symbol)
     facts = screener.facts(soup, symbol, basis, url)
     # EBITDA proxy from the compiled table: operating profit (before other income, interest, depreciation)
+    dep = {(f.period, f.basis): f.value for f in facts if f.metric == "depreciation"}
     for f in [f for f in facts if f.metric == "operating_profit"]:
         facts.append(f.model_copy(update={"metric": "ebitda"}))
+        if (f.period, f.basis) in dep:                 # EBIT = operating profit - depreciation
+            facts.append(f.model_copy(update={"metric": "ebit", "value": f.value - dep[(f.period, f.basis)], "source_type": "derived"}))
     calls = screener.transcripts(soup)
     say(f"{symbol}: {len(facts)} facts ({basis}), {len(calls)} transcripts")
     items, docs = [], []
@@ -107,7 +118,7 @@ def research(client, symbol: str) -> dict:
             "actuals_note": "Actuals are from screener.in's tables, a compiled copy of the company's filed statements. Not yet cross-checked against XBRL, so confidence is Medium.",
             "latest_quarter": quarters[-1] if quarters else None, "documents": docs,
             "scorecard": [v.model_dump(mode="json") for v in verdicts],
-            "facts": [f.model_dump(mode="json") for f in facts if f.metric in ("revenue", "total_income", "ebitda", "pat", "pbt", "cfo", "ppop")]}
+            "facts": [f.model_dump(mode="json") for f in facts if f.metric in ("revenue", "total_income", "ebitda", "ebit", "pat", "pbt", "cfo", "ppop", "other_income", "finance_costs", "depreciation")]}
 
 
 if __name__ == "__main__":

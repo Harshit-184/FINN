@@ -60,3 +60,16 @@ def test_margin_target():
 def test_no_data_is_not_verifiable():
     v = scorecard([guide("order_book", "absolute", 5000, 5000, "FY27", "Q4_FY26")], [])[0]
     assert v.status == "not_verifiable"
+
+
+def test_same_target_said_twice_on_one_call_is_one_item():
+    items = [guide("revenue", "growth", 1.5, 3, "FY27", "Q1_FY27"), guide("revenue", "growth", 1.5, 3, "FY27", "Q1_FY27")]
+    assert len(scorecard(items, FY26)) == 1
+
+
+def test_constant_currency_guidance_is_never_judged_on_rupee_growth():
+    g = [guide("revenue", "growth", 1, 2, "FY27", "Q2_FY27", caveat="Guidance is in constant currency; not comparable.")]
+    part = scorecard(g, FY26 + year("FY27", [1120, 1125]))[0]
+    full = scorecard(g, FY26 + year("FY27", [1120] * 4))[0]
+    assert part.status == "pending" and full.status == "not_verifiable"
+    assert "for context" in full.note and "+12.0%" in full.note and full.actual is None

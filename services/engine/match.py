@@ -96,7 +96,10 @@ def scorecard(items: list[GuidanceItem], facts: list[Fact], latest_transcript: s
     fx = {(f.metric, f.period): f for f in facts}
     by_target: dict[tuple, list[GuidanceItem]] = {}
     for it in sorted(items, key=lambda i: order(i.stated_in)):
-        by_target.setdefault((it.metric, it.kind, it.period), []).append(it)
+        chain = by_target.setdefault((it.metric, it.kind, it.period), [])
+        if chain and chain[-1].stated_in == it.stated_in:          # said twice on the same call (remarks, then Q&A)
+            continue
+        chain.append(it)
 
     out: list[Verdict] = []
     for chain in by_target.values():
@@ -111,13 +114,19 @@ def scorecard(items: list[GuidanceItem], facts: list[Fact], latest_transcript: s
             out.append(Verdict(item=live, status="withdrawn"))
             continue
         actual, how, ev, progress = _actual(live, fx)
-        if actual is not None:
+        if live.caveat:
+            # The filed statements cannot measure this target (e.g. constant-currency growth), so the reported
+            # figure is shown as context and never turned into Delivered or Missed.
+            shown = f"{actual:+.1f}% ({how})" if actual is not None else progress
+            v = Verdict(item=live, status="not_verifiable" if actual is not None else "pending", evidence=ev,
+                        note=(f"Reported figure for context: {shown}. " if shown else "") + live.caveat)
+        elif actual is not None:
             v = Verdict(item=live, status=_judge(live, actual), actual=round(actual, 2), actual_basis=how, evidence=ev)
         elif progress:
             v = Verdict(item=live, status="pending", progress=progress, evidence=ev)
         else:
             v = Verdict(item=live, status="not_verifiable", note="No verified actuals for this metric and period.")
         if latest_transcript and v.status == "pending" and order(live.stated_in) < order(latest_transcript):
-            v.note = f"Not reiterated in the latest available transcript ({periods.label(latest_transcript)})."
+            v.note = (v.note + " " if v.note else "") + f"Not reiterated in the latest available transcript ({periods.label(latest_transcript)})."
         out.append(v)
     return out

@@ -17,7 +17,7 @@ const STATUS: Record<string, [string, string]> = {
   withdrawn: ["Withdrawn", "text-down border-down"], not_verifiable: ["Not verifiable", "text-dim border-line"],
 };
 const P = (p: string) => p.replace("_", " ");
-const METRIC: Record<string, string> = { revenue: "Revenue", ebitda: "EBITDA", pat: "PAT", capex: "Capex", order_inflow: "Order inflow", total_income: "Total income" };
+const METRIC: Record<string, string> = { revenue: "Revenue", ebitda: "EBITDA", ebit: "Operating (EBIT)", pat: "PAT", capex: "Capex", order_inflow: "Order inflow", total_income: "Total income" };
 
 function target(i: Item) {
   const range = i.low === i.high ? `${i.low}` : `${i.low}–${i.high}`;
