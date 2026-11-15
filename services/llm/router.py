@@ -8,6 +8,7 @@ ROOT = Path(__file__).resolve().parents[2]
 CACHE = ROOT / "data" / "cache" / "llm"
 COST_LOG = ROOT / "data" / "snapshot" / "llm_usage.json"
 BASE = "https://generativelanguage.googleapis.com/v1beta"
+GOOD = ROOT / "data" / "cache" / "llm_model.txt"
 
 
 def api_key() -> str | None:
@@ -42,7 +43,9 @@ def candidates(client: httpx.Client, tier: str) -> list[str]:
                     and m["name"].split("/")[-1].startswith("gemini") and not any(x in m["name"] for x in skip)), reverse=True)
     flash = [n for n in names if "flash" in n and "lite" not in n] + [n for n in names if "flash-lite" in n]
     pro = [n for n in names if "pro" in n]
-    _candidates[tier] = (pro + flash if tier == "strong" else flash)[:6]
+    found = (pro + flash if tier == "strong" else flash)[:6]
+    good = GOOD.read_text().strip() if GOOD.exists() else "gemini-3.6-flash"     # last model that answered
+    _candidates[tier] = ([good] if good in found or not found else []) + [n for n in found if n != good]
     return _candidates[tier]
 
 
@@ -57,23 +60,31 @@ def ask_json(client: httpx.Client, prompt: str, *, doc_hash: str, prompt_version
         return json.loads(path.read_text())
     body = {"contents": [{"parts": [{"text": prompt}]}],
             "generationConfig": {"responseMimeType": "application/json", "temperature": 0}}
-    models = candidates(client, tier)
+    try:
+        models = candidates(client, tier)
+    except httpx.HTTPError as e:
+        last_error = f"could not list models: {type(e).__name__}: {str(e)[:200]}"
+        return None
+    print(f"  llm: candidates {models}", flush=True)
     for model in list(models):
         for attempt in range(2):
             try:
-                r = client.post(f"{BASE}/models/{model}:generateContent", json=body, headers={"x-goog-api-key": api_key()}, timeout=180)
+                print(f"  llm: asking {model} (try {attempt + 1}, {len(prompt) // 1000}k chars)...", flush=True)
+                r = client.post(f"{BASE}/models/{model}:generateContent", json=body, headers={"x-goog-api-key": api_key()}, timeout=90)
+                print(f"  llm: {model} -> HTTP {r.status_code}", flush=True)
                 if r.status_code != 200:
                     last_error = f"HTTP {r.status_code} from {model}: {r.text[:240]}"
-                    if r.status_code in (500, 503) or (r.status_code == 429 and "limit: 0" not in r.text and attempt == 0):
-                        time.sleep(25)                   # a per-minute limit clears; a zero quota does not
+                    if r.status_code == 429 and "limit: 0" not in r.text and attempt == 0 and model == models[0]:
+                        time.sleep(30)                   # a per-minute limit on the known-good model clears
                         continue
-                    break                                # try the next model
+                    break                                # overloaded or no quota: try the next model
                 data = r.json()
                 out = json.loads(data["candidates"][0]["content"]["parts"][0]["text"])
                 _log(model, tier, prompt_version, data.get("usageMetadata", {}))
                 path.parent.mkdir(parents=True, exist_ok=True)
                 path.write_text(json.dumps(out))
                 models.remove(model); models.insert(0, model)
+                GOOD.parent.mkdir(parents=True, exist_ok=True); GOOD.write_text(model)
                 return out
             except (httpx.HTTPError, KeyError, IndexError, ValueError) as e:
                 last_error = f"{model}: {type(e).__name__}: {str(e)[:240]}"
