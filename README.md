@@ -80,4 +80,50 @@ cd apps/web && npm install && npm run dev      # app on :3000
 
 ## Tests
 
-RESULTS_TABLE
+`pytest` runs 80 tests offline. All pass.
+
+| What is tested | Tests |
+|---|---|
+| Volume, price and filing alerts, cooldown, event-to-price | 6 |
+| 41 real NSE filings: accuracy at least 90%, no routine item Critical | 3 |
+| Brief assembly, API without a model key or snapshot, weekend window | 4 |
+| Rule classification into the 17 categories | 23 |
+| NSE/BSE merge and amended filings | 5 |
+| Promised vs Delivered statuses, YTD progress, segment and constant-currency handling | 12 |
+| Screener table parsing, transcript links, quote grounding | 3 |
+| Periods, units, QoQ/YoY, EBITDA, bank template, verification checks | 10 |
+| Priority formula, overrides and tier caps | 14 |
+
+Benchmark: on the 41 NSE filings pulled for the portfolio (8-15 Nov 2026), the rules classify 40 correctly (97.6%).
+The expected labels were assigned from the exchange's subject and summary text, not the attached PDFs.
+The one miss is a preferential-issue committee outcome filed under the abbreviation "PI".
+
+Plan acceptance tests: results figures and comparisons (synthetic input), amended filing treated as latest, routine
+compliance filing never Critical, and Brief/Portfolio/Alerts working with no model key are covered. "Unseen ticker
+end to end" and "question the documents cannot answer" are checked by hand on live runs, not automated.
+
+
+## Decisions and trade-offs
+
+- **Rules before models.** Classification, scoring, alerts and guidance matching are code. The model is used for one
+  job: reading a transcript into a fixed schema. That keeps cost near zero and makes every placement explainable.
+- **The model's output is checked, not trusted.** A target whose quote is not in the transcript is dropped. Targets for
+  one business segment are never judged against company totals, and constant-currency growth is never judged against
+  rupee growth. Both rules exist because the first live run got exactly these wrong (Dixon's telecom revenue target
+  was marked Delivered against company revenue; Infosys' 1-2% constant-currency guidance was set beside +12.3% rupee growth).
+- **Tier caps on top of the formula.** Exposure and confidence alone contribute up to 30 points, so a dividend from the
+  largest holding scored as Notable. Routine-by-nature categories are capped in config.
+- **Snapshot first.** The app reads stored payloads, so it loads instantly and does not depend on an exchange site or a
+  model being up during a demo. The cost is freshness: data is as of the last ingestion run, and the app shows that time.
+- **Screener tables instead of XBRL** for actuals, to fit the time available. They are labelled as a compiled copy and
+  capped at Medium confidence.
+
+## Cost
+
+Token use per model call is logged to `data/snapshot/llm_usage.json`. Extraction runs once per transcript and prompt
+version and is cached by document hash. All calls so far have been on the Gemini free tier.
+
+## Built with AI
+
+This project was built with Claude (planning and code) in one working day, 15 Nov 2026, with ChatGPT used for a
+review of the plan. The conversation exports are in `docs/ai-build-history/`.
