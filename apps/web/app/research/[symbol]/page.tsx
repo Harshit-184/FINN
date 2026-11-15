@@ -117,7 +117,7 @@ export default function ResearchPage({ params }: { params: Promise<{ symbol: str
             <li key={d.url} className="flex items-baseline gap-2 py-2">
               <a className="underline decoration-line underline-offset-4" href={d.url} target="_blank" rel="noreferrer">{P(d.period)} call ({d.label})</a>
               <span className="ml-auto text-right text-dim">
-                {d.error ?? <><span className="num">{d.pages}</span> pages, <span className="num">{d.kept}</span> target{d.kept === 1 ? "" : "s"} kept{d.dropped.length > 0 && <>, <span className="num">{d.dropped.length}</span> dropped</>}</>}
+                {d.error ? (d.error.startsWith("model") ? "found, not read yet (model quota reached)" : d.error) : <><span className="num">{d.pages}</span> pages, <span className="num">{d.kept}</span> target{d.kept === 1 ? "" : "s"} kept{d.dropped.length > 0 && <>, <span className="num">{d.dropped.length}</span> dropped</>}</>}
               </span>
             </li>
           ))}

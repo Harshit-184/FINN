@@ -175,4 +175,9 @@ if __name__ == "__main__":
             except Exception as e:                       # one bad ticker must not stop the batch
                 res = {"symbol": sym.upper(), "error": f"{type(e).__name__}: {e}"}
             say(f"{sym}: " + (res.get("error") or f"{len(res['scorecard'])} guidance items scored"))
-            (OUT / f"{sym.upper()}.json").write_text(json.dumps(res, indent=1))
+            path = OUT / f"{sym.upper()}.json"
+            failed = bool(res.get("documents")) and all(d.get("error") for d in res["documents"])
+            if failed and path.exists() and json.loads(path.read_text()).get("scorecard"):
+                say(f"{sym}: model unavailable; kept the earlier scorecard")      # never replace a good result with an empty one
+                continue
+            path.write_text(json.dumps(res, indent=1))

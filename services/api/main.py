@@ -61,6 +61,12 @@ def _enrich(b: dict) -> dict:
     return b
 
 
+def _read(symbol: str) -> bool:
+    """True when at least one transcript was read (or there were none to read)."""
+    r = store.research(symbol)
+    return bool(r) and not r.get("error") and (not r["documents"] or any(not d.get("error") for d in r["documents"]))
+
+
 @app.get("/research/{symbol}")
 def research(symbol: str):
     r = store.research(symbol.upper())
@@ -71,7 +77,8 @@ def research(symbol: str):
 
 @app.get("/researched")
 def researched():
-    return store.researched()
+    return [{"symbol": s, "name": store.research(s).get("name", s), "targets": len(store.research(s).get("scorecard", []))}
+            for s in store.researched() if _read(s)]
 
 
 @app.get("/brief")
@@ -120,5 +127,5 @@ def company_page(symbol: str):
     fs = sorted((f for f in store.filings() if f.symbol == symbol and f.superseded_by is None), key=lambda f: f.filed_at, reverse=True)
     return {"symbol": symbol, "name": c["name"], "sector": c["sector"], "pillars": c.get("pillars", []),
             "prices": [b.model_dump(mode="json") for b in bars[-120:]],
-            "has_research": store.research(symbol) is not None,
+            "has_research": _read(symbol),
             "filings": [(lambda c: {**c, "results": results_for(c)})({**brief_engine.card(f, store.alerts()), "event_price": strip(bars, f.filed_at) if f.tier != "routine" else None}) for f in fs]}

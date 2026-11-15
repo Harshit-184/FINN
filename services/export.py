@@ -17,7 +17,7 @@ def run(extra: dict | None = None) -> int:
               "meta.json": {**store.meta(), **(extra or {})}}
     files |= {f"company_{s}.json": main.company_page(s) for s in holdings()}
     files |= {f"research_{s}.json": store.research(s) for s in store.researched()}
-    files["researched.json"] = store.researched()
+    files["researched.json"] = main.researched()
     for name, payload in files.items():
         (OUT / name).write_text(json.dumps(payload))
     return len(files)

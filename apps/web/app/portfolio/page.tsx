@@ -6,6 +6,7 @@ import { useLoad } from "@/lib/useLoad";
 
 export default function Portfolio() {
   const { data, error } = useLoad<{ weights_note: string; holdings: Holding[] }>("/portfolio", "portfolio.json");
+  const done = useLoad<{ symbol: string; name: string; targets: number }[]>("/researched", "researched.json").data;
   if (error) return <Problem text={error} />;
   if (!data) return <Skeleton text="Loading 18 holdings…" />;
   return (
@@ -37,6 +38,23 @@ export default function Portfolio() {
           </li>
         ))}
       </ul>
+      {done && done.length > 0 && (
+        <section className="mt-8">
+          <h2 className="text-sm text-dim">Research: did management deliver what it promised?</h2>
+          <ul className="mt-2 divide-y divide-line border-y border-line">
+            {done.map((r) => (
+              <li key={r.symbol}>
+                <Link href={`/research/${r.symbol}`} className="flex items-baseline gap-3 py-2.5">
+                  <span className="num w-28 shrink-0 text-sm font-medium">{r.symbol}</span>
+                  <span className="truncate text-sm text-dim">{r.name}</span>
+                  <span className="num ml-auto shrink-0 text-xs text-dim">{r.targets} target{r.targets === 1 ? "" : "s"}</span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+          <p className="mt-2 text-[11px] text-dim">Works for any NSE symbol, including ones outside the portfolio. These are the symbols researched so far.</p>
+        </section>
+      )}
     </div>
   );
 }
