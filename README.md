@@ -41,7 +41,7 @@ Every statement is labelled Reported, Guidance or Interpretation, and the three 
 | NSE announcements | Same. Live from a laptop; NSE blocks most cloud IPs |
 | BSE announcements | Fetcher written; BSE's API returned HTTP 403 on every attempt, so the data is NSE-only |
 | Brief, Portfolio, Alerts, Company screens | Working, from the stored snapshot |
-| Research for any NSE symbol | Works from the command line for any symbol; the app shows the symbols already run |
+| Research for any NSE symbol | Works from the command line for any symbol. The app shows Infosys, Dixon and Tata Power. Persistent, HAL and IRCTC were resolved and their transcripts downloaded, but the Gemini free-tier quota ran out before they were read |
 | Results card (Revenue, EBITDA, PBT, PAT, QoQ, YoY) | Working from screener's quarterly table at Medium confidence. The XBRL parser in the plan is not built |
 | API on a server, Postgres | The FastAPI app runs locally and is tested; it is not deployed. The web app ships with the same payloads as static files |
 | Scheduled refresh, Ask bar, swipe to pin/mute, rules editor, executive bios, narrative vs numbers, bull vs bear | Not built |
@@ -120,8 +120,17 @@ end to end" and "question the documents cannot answer" are checked by hand on li
 
 ## Cost
 
-Token use per model call is logged to `data/snapshot/llm_usage.json`. Extraction runs once per transcript and prompt
-version and is cached by document hash. All calls so far have been on the Gemini free tier.
+Everything ran on the Gemini free tier, and that limit shaped the design and the result.
+
+- The first design made one model call per transcript (about 25k tokens each) and used up the day's free requests
+  before all companies were read.
+- Extraction now scores each page for guidance language plus a percentage or rupee amount, sends only the best pages,
+  and makes one call per company. That is one request instead of four and about a quarter of the tokens. Against the
+  earlier full-transcript run, 30 of 32 extracted targets sit on pages that are still sent.
+- Output is cached by document hash and prompt version, so a transcript is never paid for twice.
+- **Limitation:** the change came after most of the quota was spent, so research is published for three companies
+  (Infosys, Dixon, Tata Power). Persistent, HAL and IRCTC need one call each and are a single command away:
+  `python -m services.research PERSISTENT HAL IRCTC`.
 
 ## Built with AI
 

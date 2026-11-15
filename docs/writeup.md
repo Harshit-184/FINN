@@ -36,22 +36,26 @@ tracking at 21.0% after two quarters. Every line links to the transcript page it
 3. Signals, not verdicts. FINN tags which of the investor's thesis pillars a filing touches and shows the price around
    it as timing, not cause. It makes no buy or sell call. A target management stops repeating gets a note, not a
    "dropped" label.
-4. Cost. Extraction first used one model call per transcript and exhausted the free tier in an afternoon. It now sends
-   only the pages that contain guidance language and makes one call per company, about a quarter of the tokens. On the
-   earlier results, 30 of 32 targets sit on pages that are still sent. Everything has run on the Gemini free tier.
+4. Cost. Everything ran on the Gemini free tier. Extraction first used one model call per transcript and exhausted
+   the day's free requests. It now sends only the pages that contain guidance language and makes one call per
+   company: one request instead of four and about a quarter of the tokens. On the earlier results, 30 of 32 targets
+   sit on pages that are still sent.
 5. Stored data over live calls. The app reads a stored snapshot, so it opens instantly and does not depend on an
    exchange site or a model being up. The cost is freshness, and the app shows when each source last ran.
 
 **What is not done**
 
+- Free-tier limit: research is published for three companies (Infosys, Dixon, Tata Power). I had picked Persistent and
+  HAL to show research outside the portfolio; FINN resolved both and downloaded their transcripts, but the free quota
+  ran out before the model read them. Each needs one call: `python -m services.research PERSISTENT HAL`.
 - BSE: the fetcher is written, but BSE's API returned 403 on every attempt, so the data is NSE-only.
 - Actuals come from screener.in's tables, labelled as a compiled copy at Medium confidence. I planned to parse the
   exchange XBRL and did not get to it.
 - The backend runs and is tested locally but is not deployed; the app serves the same payloads as static files, and
   data refreshes when the ingestion script is run, not on a schedule.
 - Not built: the Ask bar, swipe to pin or mute, the alert-rules editor, executive bios for management changes,
-  narrative-vs-numbers and bull-vs-bear. Research in the app covers the symbols I ran; any other NSE symbol works
-  from the command line.
+  narrative-vs-numbers and bull-vs-bear. Any NSE symbol can be researched from the command line; the app
+  shows the ones already run.
 - Capex targets are extracted but shown as not verifiable, because capex is not in the structured data.
 
 **What I would do next**
