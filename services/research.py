@@ -17,7 +17,7 @@ from .llm import router
 from .pipeline import say
 
 OUT = Path(__file__).resolve().parents[1] / "data" / "research"
-PROMPT = (Path(__file__).parent / "llm" / "prompts" / "guidance_v1.txt").read_text()
+PROMPT = (Path(__file__).parent / "llm" / "prompts" / "guidance_v2.txt").read_text()
 
 
 def pdf_pages(data: bytes) -> list[str]:
@@ -54,7 +54,7 @@ def extract(client, symbol: str, name: str, t: dict) -> tuple[list[GuidanceItem]
     info["pages"] = len(pages)
     text = "\n".join(f"[PAGE {i + 1}]\n{p}" for i, p in enumerate(pages))[:180_000]
     raw = router.ask_json(client, PROMPT.format(company=name, symbol=symbol, call_period=periods.label(stated_in), text=text),
-                          doc_hash=hashlib.sha1(data).hexdigest(), prompt_version="guidance_v1")
+                          doc_hash=hashlib.sha1(data).hexdigest(), prompt_version="guidance_v2")
     if raw is None:
         info["error"] = "model unavailable or returned invalid output"
         say(f"llm error: {router.last_error} | tried: {router._candidates.get('cheap')}")
@@ -73,11 +73,14 @@ def extract(client, symbol: str, name: str, t: dict) -> tuple[list[GuidanceItem]
             metric, caveat = r["metric"], ""
             # Two traps found on the first live run (Infosys): growth guided in constant currency is not the INR
             # growth in the filed statements, and "operating margin" is EBIT margin, not EBITDA margin.
-            if r["kind"] == "growth" and re.search(r"constant.currency|\bcc\b", said):
+            segment = str(r.get("segment") or "this business") if r.get("scope") != "company" else ""
+            if segment:
+                caveat = f"This target is for {segment}, not the whole company. Segment actuals are not in the structured data yet, so it is not judged against company totals."
+            elif r.get("currency_basis") == "constant_currency" or r["kind"] == "growth" and re.search(r"constant.currency|\bcc\b", said):
                 caveat = "Guidance is in constant currency; filed statements report rupee revenue, so the two are not comparable."
-            if r["kind"] == "margin" and re.search(r"operating margin|ebit margin|\bebit\b", said) and "ebitda" not in said:
+            if not segment and r["kind"] == "margin" and re.search(r"operating margin|ebit margin|\bebit\b", said) and "ebitda" not in said:
                 metric = "ebit"
-            items.append(GuidanceItem(company=symbol, metric=metric, caveat=caveat, kind=r["kind"], low=float(r["low"]), high=float(r["high"]),
+            items.append(GuidanceItem(company=symbol, metric=metric, caveat=caveat, segment=segment, kind=r["kind"], low=float(r["low"]), high=float(r["high"]),
                                       unit="INR_CRORE" if r["kind"] == "absolute" else "PCT", period=r["period"], stated_in=stated_in,
                                       speaker=str(r.get("speaker", "")), quote=r["quote"], document=t["url"], page=page,
                                       supersedes_explicitly=bool(r.get("revises_earlier")), withdrawn=bool(r.get("withdrawn"))))

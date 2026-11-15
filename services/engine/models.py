@@ -100,4 +100,5 @@ class GuidanceItem(BaseModel):
     page: int
     supersedes_explicitly: bool = False       # management said it is changing an earlier target
     withdrawn: bool = False
+    segment: str = ""                         # set when the target is for one business, not the whole company
     caveat: str = ""                          # why filed numbers cannot judge this target (e.g. constant currency)

@@ -96,7 +96,7 @@ def scorecard(items: list[GuidanceItem], facts: list[Fact], latest_transcript: s
     fx = {(f.metric, f.period): f for f in facts}
     by_target: dict[tuple, list[GuidanceItem]] = {}
     for it in sorted(items, key=lambda i: order(i.stated_in)):
-        chain = by_target.setdefault((it.metric, it.kind, it.period), [])
+        chain = by_target.setdefault((it.metric, it.kind, it.period, it.segment.lower()), [])
         if chain and chain[-1].stated_in == it.stated_in:          # said twice on the same call (remarks, then Q&A)
             continue
         chain.append(it)
@@ -114,7 +114,9 @@ def scorecard(items: list[GuidanceItem], facts: list[Fact], latest_transcript: s
             out.append(Verdict(item=live, status="withdrawn"))
             continue
         actual, how, ev, progress = _actual(live, fx)
-        if live.caveat:
+        if live.segment:
+            v = Verdict(item=live, status="not_verifiable", note=live.caveat)
+        elif live.caveat:
             # The filed statements cannot measure this target (e.g. constant-currency growth), so the reported
             # figure is shown as context and never turned into Delivered or Missed.
             shown = f"{actual:+.1f}% ({how})" if actual is not None else progress

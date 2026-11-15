@@ -73,3 +73,9 @@ def test_constant_currency_guidance_is_never_judged_on_rupee_growth():
     full = scorecard(g, FY26 + year("FY27", [1120] * 4))[0]
     assert part.status == "pending" and full.status == "not_verifiable"
     assert "for context" in full.note and "+12.0%" in full.note and full.actual is None
+
+
+def test_segment_target_is_never_judged_against_company_totals():
+    g = [guide("revenue", "absolute", 5500, 6000, "FY26", "Q3_FY26", segment="Telecom", caveat="This target is for Telecom, not the whole company.")]
+    v = scorecard(g, [fact("revenue", 48873, "FY26", period_type="annual")])[0]
+    assert v.status == "not_verifiable" and v.actual is None and "Telecom" in v.note
