@@ -67,17 +67,20 @@ def ask_json(client: httpx.Client, prompt: str, *, doc_hash: str, prompt_version
         return None
     print(f"  llm: candidates {models}", flush=True)
     for model in list(models):
-        for attempt in range(2):
+        tries = 5 if model == models[0] else 1          # be patient with the model that works; one shot at the others
+        for attempt in range(tries):
             try:
                 print(f"  llm: asking {model} (try {attempt + 1}, {len(prompt) // 1000}k chars)...", flush=True)
                 r = client.post(f"{BASE}/models/{model}:generateContent", json=body, headers={"x-goog-api-key": api_key()}, timeout=90)
                 print(f"  llm: {model} -> HTTP {r.status_code}", flush=True)
                 if r.status_code != 200:
                     last_error = f"HTTP {r.status_code} from {model}: {r.text[:240]}"
-                    if r.status_code == 429 and "limit: 0" not in r.text and attempt == 0 and model == models[0]:
-                        time.sleep(30)                   # a per-minute limit on the known-good model clears
+                    daily = "PerDay" in r.text or "limit: 0" in r.text
+                    if r.status_code in (429, 500, 503) and not daily and attempt + 1 < tries:
+                        print("  llm: per-minute limit or overload, waiting 45s...", flush=True)
+                        time.sleep(45)                   # free-tier tokens-per-minute limit clears within a minute
                         continue
-                    break                                # overloaded or no quota: try the next model
+                    break                                # daily quota gone or no quota: try the next model
                 data = r.json()
                 out = json.loads(data["candidates"][0]["content"]["parts"][0]["text"])
                 _log(model, tier, prompt_version, data.get("usageMetadata", {}))
