@@ -6,7 +6,9 @@ Please find my submission for the AI Engineer build challenge.
 
 - Live app (open on a phone): https://finn-theta-nine.vercel.app
 - Code: https://github.com/Harshit-184/FINN
-- AI build history: [LINKS TO BE ADDED]
+- AI build history:
+  - Claude: https://claude.ai/share/001b1e3a-dabe-41fe-8014-d0e5eef8f427
+  - ChatGPT: https://chatgpt.com/share/6af9bc28-18b4-83ee-becf-ea9d383c1069
 
 **What I built**
 
