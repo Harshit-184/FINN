@@ -31,25 +31,42 @@ def process(raw: list[Filing], bars: dict[str, list[Bar]], rules: dict | None = 
     return filings, alert_engine.combine(found, filings)
 
 
+def say(msg: str) -> None:
+    """Progress to the console and to data/ingest_log.txt, so a silent window is never ambiguous."""
+    print(msg, flush=True)
+    log = SNAP.parent / "ingest_log.txt"
+    log.parent.mkdir(parents=True, exist_ok=True)
+    with log.open("a", encoding="utf-8") as fh:
+        fh.write(f"{datetime.now():%H:%M:%S} {msg}\n")
+
+
 def run(days: int) -> dict:
     end, start = date.today(), date.today() - timedelta(days=days)
     status: dict[str, str] = {}
     raw: list[Filing] = []
+    say(f"FINN ingest {start} to {end}")
     try:
+        say("prices: Yahoo Finance, one batched call...")
         bars = prices.eod(list(holdings()))
         status["prices"] = f"ok ({sum(1 for v in bars.values() if v)}/{len(bars)} symbols)"
     except Exception as e:                                     # yfinance raises many types
-        bars, status["prices"] = {}, f"failed: {e}"
+        bars, status["prices"] = {}, f"failed: {type(e).__name__}: {e}"
+    say(f"prices: {status['prices']}")
     with httpx.Client(follow_redirects=True) as client:
         for name, fetch in (("nse", lambda h: nse.announcements(client, h["symbol"], start, end)),
                             ("bse", lambda h: bse.announcements(client, h["symbol"], h["bse_code"], start, end) if h.get("bse_code") else [])):
             ok = fail = 0
+            last = ""
             for h in holdings().values():
+                if fail >= 2 and ok == 0:                      # source is down or blocking us: stop, don't wait 18 times
+                    break
                 try:
-                    raw += fetch(h); ok += 1
+                    got = fetch(h); raw += got; ok += 1
+                    say(f"{name}: {h['symbol']} {len(got)} filings")
                 except (SourceError, httpx.HTTPError, KeyError, ValueError) as e:
-                    fail += 1; last = str(e)
-            status[name] = f"ok ({ok} symbols)" if not fail else f"{ok} ok, {fail} failed: {last}"
+                    fail += 1; last = f"{type(e).__name__}: {e}"
+                    say(f"{name}: {h['symbol']} FAILED {last}")
+            status[name] = f"ok ({ok} symbols)" if not fail else f"{ok} ok, {fail} failed, last error: {last}"
     filings, alerts = process(raw, bars)
     SNAP.mkdir(parents=True, exist_ok=True)
     (SNAP / "filings.json").write_text(json.dumps([f.model_dump(mode="json") for f in filings], indent=1))
@@ -59,10 +76,11 @@ def run(days: int) -> dict:
             "sources": status, "filings_raw": len(raw), "filings_after_dedupe": len(filings),
             "sent_to_llm": sum(f.classified_by == "none" for f in filings)}
     (SNAP / "meta.json").write_text(json.dumps(meta, indent=1))
+    say("done: " + json.dumps(meta))
     return meta
 
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--days", type=int, default=7)
-    print(json.dumps(run(ap.parse_args().days), indent=1))
+    run(ap.parse_args().days)

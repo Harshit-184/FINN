@@ -22,13 +22,13 @@ def get(client: httpx.Client, url: str, *, params=None, headers=None, ttl: int =
     if ttl and path.exists() and time.time() - path.stat().st_mtime < ttl:
         return json.loads(path.read_text()) if as_json else path.read_bytes()
     host, err = urlparse(url).netloc, None
-    for attempt in range(3):
+    for attempt in range(3):                         # 3 tries, backing off 1s then 2s
         wait = min_gap - (time.time() - _last.get(host, 0))
         if wait > 0:
             time.sleep(wait)
         try:
             _last[host] = time.time()
-            r = client.get(url, params=params, headers=headers, timeout=20)
+            r = client.get(url, params=params, headers=headers, timeout=12)
             r.raise_for_status()
             data = r.json() if as_json else r.content
             path.parent.mkdir(parents=True, exist_ok=True)
@@ -36,5 +36,6 @@ def get(client: httpx.Client, url: str, *, params=None, headers=None, ttl: int =
             return data
         except (httpx.HTTPError, ValueError) as e:
             err = e
-            time.sleep(2 ** attempt)
+            if attempt < 2:
+                time.sleep(2 ** attempt)
     raise SourceError(f"{host}: {err}")
