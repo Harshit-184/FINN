@@ -73,12 +73,13 @@ def score(f: Filing, market_cap_cr: float | None = None) -> Filing:
     f.score = round(sum(cfg["weights"][k] * v for k, v in terms.items()), 1)
     t = cfg["tiers"]
     f.tier = "critical" if f.score >= t["critical"] else "notable" if f.score >= t["notable"] else "routine"
-    # A small holding never hides a serious risk.
-    if f.category in cfg["override_categories"] and terms["S"] >= cfg["override_severity"]:
+    severe = terms["S"] >= cfg["override_severity"]
+    # Categories that are routine or notable by nature are capped; a notable cap lifts when the event is severe.
+    cap = cfg.get("tier_caps", {}).get(f.category)
+    if cap == "routine" or (cap == "notable" and f.tier == "critical" and not severe):
+        f.tier = cap
+    # A small holding never hides a serious risk or a CXO exit.
+    if f.category in cfg["override_categories"] and severe:
         f.tier = "critical"
         f.score_terms["override"] = 1.0
-    # Categories that are routine by nature are capped, whatever the exposure (see tier_caps in the config).
-    cap = cfg.get("tier_caps", {}).get(f.category)
-    if cap == "routine" or (cap == "notable" and f.tier == "critical"):
-        f.tier = cap
     return f

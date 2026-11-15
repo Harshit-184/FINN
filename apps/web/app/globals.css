@@ -1,0 +1,32 @@
+@import "tailwindcss";
+@import "@fontsource-variable/hanken-grotesk";
+@import "@fontsource/ibm-plex-mono/400.css";
+@import "@fontsource/ibm-plex-mono/500.css";
+
+/* Ink-blue ledger. Colour carries meaning only: green/red for deltas and statuses, marigold for Critical. */
+@theme {
+  --color-ink: #0e1620;
+  --color-panel: #16212d;
+  --color-raise: #1d2b3a;
+  --color-line: #2a3a4c;
+  --color-text: #e7edf3;
+  --color-dim: #8fa0b3;
+  --color-up: #45b88f;
+  --color-down: #e8686d;
+  --color-crit: #f0a83a;
+  --font-sans: "Hanken Grotesk Variable", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+}
+
+html { background: var(--color-ink); color-scheme: dark; }
+body { color: var(--color-text); font-family: var(--font-sans); -webkit-font-smoothing: antialiased; }
+.num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; letter-spacing: -0.01em; }
+:focus-visible { outline: 2px solid var(--color-crit); outline-offset: 2px; border-radius: 4px; }
+
+/* Evidence labels never look alike: shape, not colour, tells them apart. */
+.ev { font-size: 11px; line-height: 16px; padding: 0 6px; border-radius: 3px; white-space: nowrap; }
+.ev-reported { background: var(--color-raise); color: var(--color-text); }
+.ev-guidance { border: 1px dashed var(--color-dim); color: var(--color-text); }
+.ev-interpretation { border-bottom: 1px dotted var(--color-dim); color: var(--color-dim); font-style: italic; border-radius: 0; }
+
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }

@@ -65,3 +65,13 @@ def test_dividend_from_the_largest_holding_stays_routine():
 
 def test_transcript_landing_lifts_an_earnings_call():
     assert run("Transcript of Earnings Call for Q2 FY27").score > run("Intimation of Earnings Conference Call").score
+
+
+def test_cfo_exit_is_critical_in_a_mid_weight_holding():
+    assert run("Resignation of Chief Financial Officer", symbol="DIXON").tier == "critical"
+
+
+def test_capex_is_notable_unless_large():
+    small = score(classify(filing("Press Release - commissioning of 300 MW solar capacity", symbol="TATAPOWER")))
+    big = score(classify(filing("Capex of Rs. 9,000 crore for new solar capacity", symbol="TATAPOWER")), market_cap_cr=130000)
+    assert small.tier == "notable" and big.tier == "critical"

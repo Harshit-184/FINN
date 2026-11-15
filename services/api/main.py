@@ -72,4 +72,4 @@ def company_page(symbol: str):
     fs = sorted((f for f in store.filings() if f.symbol == symbol and f.superseded_by is None), key=lambda f: f.filed_at, reverse=True)
     return {"symbol": symbol, "name": c["name"], "sector": c["sector"], "pillars": c.get("pillars", []),
             "prices": [b.model_dump(mode="json") for b in bars[-120:]],
-            "filings": [{**f.model_dump(mode="json"), "event_price": strip(bars, f.filed_at) if f.tier != "routine" else None} for f in fs]}
+            "filings": [{**brief_engine.card(f, store.alerts()), "event_price": strip(bars, f.filed_at) if f.tier != "routine" else None} for f in fs]}

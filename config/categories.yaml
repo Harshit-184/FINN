@@ -3,11 +3,13 @@
 weights: {M: 0.30, S: 0.20, T: 0.20, P: 0.15, C: 0.15}
 tiers: {critical: 70, notable: 40}
 confidence_score: {high: 100, medium: 60, low: 30}
-override_categories: [litigation, pledging, credit_rating]   # S >= 80 => Critical whatever the exposure
+override_categories: [litigation, pledging, credit_rating, management_change]   # S >= 80 => Critical whatever the exposure
 override_severity: 80
 # P and C alone contribute up to 30 points, so a dividend from the largest holding would score 40+ and
 # read as Notable. The formula ranks items; this table sets the ceiling for categories that are routine by nature.
-tier_caps: {dividend: routine, bonus_split: routine, agm_egm: routine, postal_ballot: routine, investor_meetings: routine, unclassified: routine}
+# A 'notable' cap is lifted when severity reaches override_severity (e.g. capex above 1% of market cap).
+tier_caps: {dividend: routine, bonus_split: routine, agm_egm: routine, postal_ballot: routine, investor_meetings: routine, unclassified: routine,
+            capex: notable, fund_raise: notable, press_release: notable, earnings_call: notable, insider_trading: notable, credit_rating: notable}
 
 materiality:
   results: 90
